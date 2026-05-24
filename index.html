@@ -1,897 +1,796 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>InternOS — IIM Bodh Gaya</title>
-
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-
-	<style>
-		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-		:root {
-			--bg: #f5f4f0;
-			--surface: #ffffff;
-			--surface2: #f0efe9;
-			--border: rgba(0,0,0,0.09);
-			--border-mid: rgba(0,0,0,0.15);
-			--text: #1a1a18;
-			--muted: #6b6b65;
-			--accent: #1D9E75;
-			--accent-dark: #0F6E56;
-			--accent-light: #e1f5ee;
-			--font-body: 'Instrument Sans', sans-serif;
-			--font-mono: 'DM Mono', monospace;
-			--radius: 8px;
-			--radius-lg: 12px;
-		}
-
-		body {
-			font-family: var(--font-body);
-			background: var(--bg);
-			color: var(--text);
-			min-height: 100vh;
-			display: flex;
-			flex-direction: column;
-		}
-
-		/* ── Layout ── */
-		.app { display: flex; height: 100vh; overflow: hidden; }
-
-		.sidebar {
-			width: 220px;
-			min-width: 220px;
-			background: var(--surface);
-			border-right: 1px solid var(--border);
-			display: flex;
-			flex-direction: column;
-			overflow-y: auto;
-		}
-
-		.sidebar-logo {
-			padding: 20px 18px 16px;
-			border-bottom: 1px solid var(--border);
-		}
-		.sidebar-logo-name {
-			font-size: 15px;
-			font-weight: 600;
-			letter-spacing: -0.3px;
-			display: flex;
-			align-items: center;
-			gap: 6px;
-		}
-		.sidebar-logo-name i { color: var(--accent); font-size: 17px; }
-		.sidebar-logo-sub { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: var(--font-mono); }
-
-		.nav-section { padding: 10px 0; }
-		.nav-label {
-			font-size: 10px;
-			font-weight: 500;
-			color: var(--muted);
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			padding: 6px 18px 4px;
-		}
-
-		.nav-item {
-			display: flex;
-			align-items: center;
-			gap: 9px;
-			padding: 8px 18px;
-			font-size: 13px;
-			color: var(--muted);
-			cursor: pointer;
-			transition: all 0.12s;
-			border-right: 2px solid transparent;
-			user-select: none;
-		}
-		.nav-item:hover { background: var(--surface2); color: var(--text); }
-		.nav-item.active {
-			background: var(--accent-light);
-			color: var(--accent-dark);
-			font-weight: 500;
-			border-right-color: var(--accent);
-		}
-		.nav-item i { font-size: 16px; }
-
-		.sidebar-footer {
-			margin-top: auto;
-			padding: 14px 18px;
-			border-top: 1px solid var(--border);
-			font-size: 11px;
-		}
-		.sidebar-footer .label { color: var(--muted); }
-		.sidebar-footer .value { font-weight: 500; margin-top: 2px; font-size: 12px; }
-
-		.main {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			overflow: hidden;
-			background: var(--bg);
-		}
-
-		.topbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 14px 24px;
-			background: var(--surface);
-			border-bottom: 1px solid var(--border);
-			flex-shrink: 0;
-		}
-		.topbar-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
-		.topbar-actions { display: flex; gap: 8px; }
-
-		.btn {
-			display: inline-flex;
-			align-items: center;
-			gap: 5px;
-			padding: 7px 13px;
-			font-size: 12px;
-			font-family: var(--font-body);
-			border-radius: var(--radius);
-			cursor: pointer;
-			border: 1px solid var(--border-mid);
-			background: var(--surface);
-			color: var(--text);
-			transition: all 0.12s;
-			font-weight: 500;
-		}
-		.btn:hover { background: var(--surface2); }
-		.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-		.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
-
-		.content { padding: 20px 24px; flex: 1; overflow-y: auto; }
-
-		/* ── Metrics ── */
-		.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-		.metric-card {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			padding: 14px 16px;
-		}
-		.metric-label { font-size: 11px; color: var(--muted); margin-bottom: 5px; font-family: var(--font-mono); }
-		.metric-value { font-size: 26px; font-weight: 600; letter-spacing: -1px; }
-		.metric-sub { font-size: 11px; margin-top: 3px; color: var(--muted); }
-		.metric-sub.green { color: var(--accent); }
-
-		/* ── Tables ── */
-		.table-wrap {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			overflow: hidden;
-			margin-bottom: 16px;
-		}
-		table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-		thead { background: var(--surface2); }
-		th {
-			padding: 9px 14px;
-			text-align: left;
-			font-weight: 500;
-			font-size: 11px;
-			color: var(--muted);
-			border-bottom: 1px solid var(--border);
-			font-family: var(--font-mono);
-			letter-spacing: 0.02em;
-		}
-		td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-		tr:last-child td { border-bottom: none; }
-		tbody tr:hover td { background: var(--surface2); }
-
-		/* ── Badges ── */
-		.badge {
-			display: inline-block;
-			padding: 2px 8px;
-			border-radius: 100px;
-			font-size: 10.5px;
-			font-weight: 500;
-			font-family: var(--font-mono);
-		}
-		.b-applied  { background: #dbeafe; color: #1e40af; }
-		.b-interview{ background: #d1fae5; color: #065f46; }
-		.b-rejected { background: #fee2e2; color: #991b1b; }
-		.b-toapply  { background: #f3f4f6; color: #374151; }
-		.b-oa       { background: #fef3c7; color: #92400e; }
-		.b-selected { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
-		.t1 { background: #ede9fe; color: #4c1d95; }
-		.t2 { background: #e1f5ee; color: #085041; }
-		.t3 { background: #fef3c7; color: #92400e; }
-
-		/* ── Filters ── */
-		.filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
-		.search-input {
-			flex: 1;
-			min-width: 180px;
-			padding: 7px 12px;
-			font-size: 12.5px;
-			font-family: var(--font-body);
-			border: 1px solid var(--border-mid);
-			border-radius: var(--radius);
-			background: var(--surface);
-			color: var(--text);
-		}
-		.search-input:focus { outline: none; border-color: var(--accent); }
-
-		.filter-btn {
-			padding: 5px 11px;
-			font-size: 11px;
-			border-radius: 100px;
-			border: 1px solid var(--border-mid);
-			background: var(--surface);
-			color: var(--muted);
-			cursor: pointer;
-			font-family: var(--font-mono);
-			transition: all 0.1s;
-		}
-		.filter-btn:hover { background: var(--surface2); color: var(--text); }
-		.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-		/* ── Charts ── */
-		.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-		.bar-label { font-size: 11px; color: var(--muted); width: 110px; text-align: right; flex-shrink: 0; font-family: var(--font-mono); }
-		.bar-track { flex: 1; height: 18px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-		.bar-fill {
-			height: 100%;
-			background: var(--accent);
-			border-radius: 3px;
-			display: flex;
-			align-items: center;
-			justify-content: flex-end;
-			padding-right: 6px;
-			font-size: 9.5px;
-			font-weight: 500;
-			color: #fff;
-			transition: width 0.4s ease;
-		}
-
-		/* ── ATS ── */
-		.ats-card {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			padding: 14px 16px;
-			margin-bottom: 10px;
-		}
-		.ats-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-		.ats-company { font-size: 13px; font-weight: 500; }
-		.ats-role-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: var(--font-mono); }
-		.ats-score { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
-		.progress-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
-		.progress-fill { height: 100%; border-radius: 3px; }
-
-		.kw-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
-		.kw { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-family: var(--font-mono); }
-		.kw-match { background: #d1fae5; color: #065f46; }
-		.kw-miss  { background: #fee2e2; color: #991b1b; }
-
-		/* ── Skills ── */
-		.skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-		.skill-card {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			padding: 12px 14px;
-		}
-		.skill-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-		.skill-name { font-size: 12.5px; font-weight: 500; }
-		.skill-level { font-size: 10.5px; color: var(--muted); font-family: var(--font-mono); }
-
-		/* ── Platforms ── */
-		.platforms-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
-		.platform-card {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			padding: 10px 14px;
-			display: flex;
-			align-items: center;
-			gap: 10px;
-		}
-		.platform-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-		.platform-name { font-size: 12.5px; font-weight: 500; }
-		.platform-desc { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
-
-		/* ── Weekly ── */
-		.week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 16px; }
-		.day-card {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			padding: 10px 8px;
-			text-align: center;
-		}
-		.day-name {
-			font-size: 10px;
-			font-weight: 600;
-			color: var(--muted);
-			font-family: var(--font-mono);
-			text-transform: uppercase;
-			letter-spacing: 0.06em;
-			margin-bottom: 6px;
-		}
-		.day-tasks { font-size: 10.5px; color: var(--text); line-height: 1.7; }
-
-		/* ── Info box ── */
-		.info-box {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-left: 3px solid var(--accent);
-			border-radius: var(--radius-lg);
-			padding: 14px 16px;
-			font-size: 12.5px;
-			color: var(--muted);
-			line-height: 1.8;
-		}
-		.info-box strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 6px; font-size: 13px; }
-
-		/* ── Grid helpers ── */
-		.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-		.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-		.section-label {
-			font-size: 12px;
-			font-weight: 600;
-			font-family: var(--font-mono);
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
-			color: var(--muted);
-		}
-		.footer-count { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
-
-		/* ── Modal ── */
-		.overlay {
-			display: none;
-			position: fixed;
-			inset: 0;
-			background: rgba(0,0,0,0.35);
-			z-index: 200;
-			align-items: center;
-			justify-content: center;
-		}
-		.overlay.open { display: flex; }
-		.modal {
-			background: var(--surface);
-			border-radius: var(--radius-lg);
-			border: 1px solid var(--border);
-			padding: 22px;
-			width: 460px;
-			max-height: 88vh;
-			overflow-y: auto;
-		}
-		.modal-title {
-			font-size: 14px;
-			font-weight: 600;
-			margin-bottom: 18px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-		.form-group { margin-bottom: 13px; }
-		.form-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); display: block; margin-bottom: 4px; }
-		.form-input {
-			width: 100%;
-			padding: 8px 11px;
-			font-size: 12.5px;
-			font-family: var(--font-body);
-			border: 1px solid var(--border-mid);
-			border-radius: var(--radius);
-			background: var(--surface2);
-			color: var(--text);
-			transition: border-color 0.1s;
-		}
-		.form-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
-		.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-		.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
-
-		a { color: var(--accent); text-decoration: none; }
-		a:hover { text-decoration: underline; }
-
-		@media (max-width: 900px) {
-			.metrics { grid-template-columns: repeat(2, 1fr); }
-			.two-col { grid-template-columns: 1fr; }
-			.week-grid { grid-template-columns: repeat(4, 1fr); }
-			.skills-grid { grid-template-columns: 1fr; }
-		}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InternOS – Internship Tracker & Resources</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Google Fonts for a clean look -->
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #204080;
+      --accent: #2962ff;
+      --bg: #f6f7fb;
+      --text: #222;
+      --card: #fff;
+      --border: #e0e3ee;
+      --shadow: 0 2px 8px rgba(32,64,128,0.07);
+      --radius: 10px;
+      --danger: #e53935;
+      --success: #43a047;
+      --warning: #fbc02d;
+      --grey: #888;
+      --blue: #1976d2;
+      --orange: #f57c00;
+      --selected: #2ecc40;
+      --mobile-nav-height: 56px;
+    }
+    html, body {
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Inter', Arial, sans-serif;
+      font-size:16px;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 11;
+      box-shadow: var(--shadow);
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.2em;
+      min-height: 56px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.25em;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+      margin-right: 10px;
+    }
+    nav {
+      flex: 1;
+      margin-left: 1em;
+    }
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5em;
+      list-style: none;
+      margin: 0; padding: 0;
+    }
+    .nav-tabs li {
+      margin: 0;
+    }
+    .nav-tabs button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1em;
+      padding: 0.4em 0.7em;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .nav-tabs button.active, .nav-tabs button:hover {
+      background: var(--accent);
+    }
+    .resume-btn {
+      margin-left: 1em;
+      background: #fff;
+      color: var(--primary);
+      border: none;
+      font-weight: 600;
+      border-radius: var(--radius);
+      padding: 0.45em 1.25em;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: background .2s, color .2s;
+    }
+    .resume-btn:hover { background: var(--accent); color: #fff; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      margin-left: 10px;
+      padding: 8px;
+    }
+    .hamburger div {
+      background: #fff;
+      height: 3px;
+      width: 24px;
+      margin: 3px 0;
+      border-radius: 2px;
+    }
+    main {
+      flex:1;
+      width:100%;
+      max-width: 1200px;
+      margin: 35px auto 0 auto;
+      padding: 1em;
+      min-height: 400px;
+    }
+    section {
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 1.4em;
+      font-weight:600;
+      color: var(--primary);
+      margin-bottom:0.5em;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1em;
+      margin-bottom: 1em;
+    }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1em;
+      border: 1px solid var(--border);
+      display:flex;
+      flex-direction:column;
+      align-items: flex-start;
+      transition: box-shadow .2s;
+    }
+    .card:hover {
+      box-shadow: 0 4px 24px rgba(41,98,255,.15);
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin-bottom: 0.4em;
+    }
+    .card-desc {
+      color: var(--grey);
+      font-size: 0.97em;
+      margin-bottom: .6em;
+    }
+    .card-link {
+      margin-top: auto;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.35em 1em;
+      border-radius: var(--radius);
+      font-size: 0.97em;
+      display:inline-block;
+      transition: background .2s;
+    }
+    .card-link:hover { background: var(--primary); }
+    .status-badge {
+      display:inline-block;
+      min-width:80px;
+      text-align:center;
+      padding:2px 14px;
+      font-size:0.97em;
+      font-weight:600;
+      border-radius:12px;
+      margin-right:3px;
+      border:1px solid #d5d5d5;
+      margin-bottom:2px;
+    }
+    .to-apply     { background: #f6f7fb; color: var(--grey);}
+    .applied      { background: #e3f0fd; color: var(--blue);}
+    .oa-pending   { background: #fff7e0; color: var(--warning);}
+    .interview    { background: #ffe4ce; color: var(--orange);}
+    .rejected     { background: #ffe0e1; color: var(--danger);}
+    .selected     { background: #def7e2; color: var(--success);}
+    .tracker-table,.apps-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom:1em;
+    }
+    .tracker-table th, .tracker-table td,
+    .apps-table th, .apps-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size:0.98em;
+    }
+    .apps-table th, .tracker-table th {
+      background: #f2f4fa;
+      text-align:left;
+    }
+    input, textarea, select, button {
+      font-family: inherit;
+      font-size: inherit;
+    }
+    input[type="text"],input[type="date"],textarea,select {
+      width: 100%;
+      padding: 0.45em;
+      margin-bottom: .9em;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: #f8fafc;
+      transition: border .2s;
+      box-sizing: border-box;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+    textarea { min-height: 48px; }
+    button, input[type="button"] {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.5em 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 2px;
+      margin-bottom: 7px;
+      box-shadow: var(--shadow);
+      transition: background .2s;
+    }
+    button:hover, input[type="button"]:hover {
+      background: var(--accent);
+    }
+    /* ATS score styles */
+    .ats-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2em;
+      margin-bottom:.7em;
+      align-items:start;
+    }
+    .ats-column {
+      display: flex;
+      flex-direction: column;
+      gap: .3em;
+    }
+    .ats-label { font-weight: 500; margin-bottom: 3px;}
+    #ats-result {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: .72em 1em;
+      margin-top: .85em;
+      font-size:1.07em;
+      font-weight: 600;
+      color: var(--accent);
+      display: inline-block;
+    }
+    /* Weekly planner */
+    .weekly-plan {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+      gap: 1em;
+    }
+    .day-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: .6em;
+      min-width:0;
+      display: flex;
+      flex-direction:column;
+    }
+    .day-card h4 {
+      margin:0 0 .4em 0;
+      font-size:1em;
+      font-weight:600;
+      color: var(--accent);
+    }
+    .day-input {
+      resize: vertical;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+    }
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      color: var(--grey);
+      font-size: 1.13em;
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 2.5em 1em;
+      box-shadow: var(--shadow);
+      margin:2em auto 1em auto;
+      max-width:400px;
+    }
+    /* RESPONSIVE */
+    @media (max-width:850px) {
+      main { padding: .5em; }
+      .weekly-plan { gap: .4em; }
+    }
+    @media (max-width:720px) {
+      .nav-tabs { gap: .1em;}
+      main { margin:18px 0 0 0;}
+    }
+    @media (max-width:650px) {
+      .card-grid { grid-template-columns: repeat(auto-fit, minmax(165px,1fr));}
+      .ats-wrapper { grid-template-columns: 1fr; gap: .7em; }
+      .weekly-plan { grid-template-columns: repeat(2,1fr);}
+    }
+    @media (max-width:600px) {
+      header { font-size:1em;}
+      .navbar {padding:0 .6em;}
+      .weekly-plan { grid-template-columns: 1fr;}
+      .nav-tabs {
+        flex-direction: column;
+        display:none;
+        background: var(--primary);
+        position: absolute;
+        left:0; right:0;
+        top: var(--mobile-nav-height);
+        z-index:12;
+        padding: 0.9em 0;
+      }
+      .nav-tabs.open { display: flex;}
+      .resume-btn { min-width: 115px;}
+      .hamburger { display: flex;}
+      main { padding:.24em;}
+      .weekly-plan {gap: .4em;}
+    }
+    /* Hide skip-link visually except for screen readers and on focus for accessibility */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      z-index: 100;
+      background: #fff;
+      color: var(--primary);
+      padding:8px;
+      border-radius:8px;
+      border:1px solid var(--accent);
+    }
+    .skip-link:focus {
+      left: 16px; 
+      top: 16px;
+      width: auto;
+      height: auto;
+      outline: none;
+    }
+  </style>
 </head>
-
 <body>
-	<div class="app">
-		<!-- Sidebar -->
-		<div class="sidebar">
-			<div class="sidebar-logo">
-				<div class="sidebar-logo-name"><i class="ti ti-briefcase-2"></i> InternOS</div>
-				<div class="sidebar-logo-sub">IIM Bodh Gaya · IPM</div>
-			</div>
+  <!-- Accessibility: skip to main content -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header>
+    <div class="navbar">
+      <a href="#" class="logo" tabindex="1">InternOS</a>
+      <nav>
+        <ul class="nav-tabs" id="navTabs">
+          <li><button data-tab="overview"   class="active" aria-label="Overview">Overview</button></li>
+          <li><button data-tab="dashboard"  aria-label="Dashboard">Dashboard</button></li>
+          <li><button data-tab="applications" aria-label="Applications">Applications</button></li>
+          <li><button data-tab="tracker"    aria-label="Tracker">Tracker</button></li>
+          <li><button data-tab="ats"        aria-label="ATS Scores">ATS Scores</button></li>
+          <li><button data-tab="planning"   aria-label="Planning">Planning</button></li>
+          <li><button data-tab="skills"     aria-label="Skills">Skills</button></li>
+          <li><button data-tab="sources"    aria-label="Sources">Sources</button></li>
+          <li><button data-tab="weekly"     aria-label="Weekly Plan">Weekly Plan</button></li>
+        </ul>
+      </nav>
+      <button class="resume-btn" id="resumeBtn" tabindex="2" aria-label="My Resume">My Resume</button>
+      <div class="hamburger" id="hamburgerBtn" tabindex="3" aria-label="Open menu">
+        <div></div><div></div><div></div>
+      </div>
+    </div>
+  </header>
+  <main id="main-content">
+    <!-- OVERVIEW TAB -->
+    <section id="overview" class="active">
+      <h2>Welcome to InternOS</h2>
+      <p>
+        Your central hub for tracking internship applications, researching top sources, planning, and improving your chances—all in one clean, private dashboard. <br>
+        Use the navigation above to access different features.
+      </p>
+      <ul>
+        <li>Easily add, view & update all internship applications</li>
+        <li>Compare resume with job descriptions using ATS Score</li>
+        <li>Access India's top internship sources directly</li>
+        <li>Plan your week, manage skills, and more—100% private, data is stored in your browser</li>
+      </ul>
+    </section>
+    <!-- DASHBOARD TAB -->
+    <section id="dashboard">
+      <h2>Dashboard</h2>
+      <div id="dashboardApps"></div>
+    </section>
+    <!-- APPLICATIONS TAB -->
+    <section id="applications">
+      <h2>Applications</h2>
+      <form id="addAppForm" autocomplete="off" style="margin-bottom:1.2em;">
+        <div style="display:flex;gap:1em;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <input type="text" placeholder="Company" required id="appCompany">
+          </div>
+          <div style="flex:1.3;">
+            <input type="text" placeholder="Role (e.g. Data Analyst Intern)" required id="appRole">
+          </div>
+          <div style="flex:1;">
+            <select id="appStatus" required>
+              <option value="">Status</option>
+              <option value="to-apply">To Apply</option>
+              <option value="applied">Applied</option>
+              <option value="oa-pending">OA Pending</option>
+              <option value="interview">Interview</option>
+              <option value="rejected">Rejected</option>
+              <option value="selected">Selected</option>
+            </select>
+          </div>
+          <div style="flex:1;">
+            <input type="date" id="appDate" placeholder="Date applied">
+          </div>
+          <div style="flex:1;">
+            <input type="url" id="appLink" placeholder="Job Link (optional)">
+          </div>
+        </div>
+        <textarea id="appNotes" placeholder="Notes (optional)"></textarea>
+        <button type="submit">Add Application</button>
+      </form>
+      <div id="applicationsList"></div>
+    </section>
+    <!-- TRACKER TAB -->
+    <section id="tracker">
+      <h2>Application Tracker</h2>
+      <div id="trackerList"></div>
+    </section>
+    <!-- ATS TAB -->
+    <section id="ats">
+      <h2>ATS Resume Checker</h2>
+      <div class="ats-wrapper">
+        <div class="ats-column">
+          <label class="ats-label" for="atsJobDesc">Paste Job Description</label>
+          <textarea id="atsJobDesc" placeholder="Paste the internship JD here"></textarea>
+        </div>
+        <div class="ats-column">
+          <label class="ats-label" for="atsResume">Paste Your Resume</label>
+          <textarea id="atsResume" placeholder="Paste your resume's full text here"></textarea>
+        </div>
+      </div>
+      <button id="atsCheckBtn">Check Score</button>
+      <span id="ats-result"></span>
+    </section>
+    <!-- PLANNING TAB -->
+    <section id="planning">
+      <h2>Planning</h2>
+      <p>Coming soon: Plan your application strategy here — set goals, deadlines, and reminders.</p>
+    </section>
+    <!-- SKILLS TAB -->
+    <section id="skills">
+      <h2>Skills</h2>
+      <p>Coming soon: Track skills you want to learn or improve for your target roles.</p>
+    </section>
+    <!-- SOURCES TAB -->
+    <section id="sources">
+      <h2>Top Internship Sources</h2>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">LinkedIn Jobs</div>
+          <div class="card-desc">Corporate, business & data internships</div>
+          <a class="card-link" href="https://www.linkedin.com/jobs/search/?keywords=internship&location=India" target="_blank" rel="noopener">Open LinkedIn</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Wellfound</div>
+          <div class="card-desc">Startup roles, product & tech</div>
+          <a class="card-link" href="https://wellfound.com/jobs" target="_blank" rel="noopener">Open Wellfound</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Indeed India</div>
+          <div class="card-desc">Wide range of Indian internships</div>
+          <a class="card-link" href="https://in.indeed.com/jobs?q=internship&l=India" target="_blank" rel="noopener">Open Indeed</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Internshala</div>
+          <div class="card-desc">Campus + off-campus, all locations</div>
+          <a class="card-link" href="https://internshala.com/internships" target="_blank" rel="noopener">Open Internshala</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Naukri</div>
+          <div class="card-desc">Major Indian internship listings</div>
+          <a class="card-link" href="https://www.naukri.com/internship-jobs" target="_blank" rel="noopener">Open Naukri</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Unstop</div>
+          <div class="card-desc">Competitions & internships</div>
+          <a class="card-link" href="https://unstop.com/internships" target="_blank" rel="noopener">Open Unstop</a>
+        </div>
+        <div class="card">
+          <div class="card-title">IIMJobs</div>
+          <div class="card-desc">MBA/business internships</div>
+          <a class="card-link" href="https://www.iimjobs.com/j/internship" target="_blank" rel="noopener">Open IIMJobs</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Handshake</div>
+          <div class="card-desc">Campus jobs, US-focused</div>
+          <a class="card-link" href="https://joinhandshake.com/" target="_blank" rel="noopener">Open Handshake</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Glassdoor</div>
+          <div class="card-desc">Company reviews & salaries</div>
+          <a class="card-link" href="https://www.glassdoor.co.in/Job/internship-jobs-SRCH_KO0,10.htm" target="_blank" rel="noopener">Open Glassdoor</a>
+        </div>
+      </div>
+    </section>
+    <!-- WEEKLY PLAN TAB -->
+    <section id="weekly">
+      <h2>Weekly Plan</h2>
+      <div class="weekly-plan" id="weeklyPlan"></div>
+    </section>
+  </main>
+<script>
+  // NAVIGATION: Hamburger + Tabs
+  const navTabs = document.getElementById('navTabs');
+  const tabs = navTabs.querySelectorAll('button');
+  const sections = document.querySelectorAll('main section');
+  function showTab(tabId) {
+    tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    sections.forEach(s => s.classList.toggle('active', s.id === tabId));
+    if(window.innerWidth < 601) navTabs.classList.remove('open');
+    window.location.hash = tabId !== 'overview' ? '#' + tabId : '';
+  }
+  tabs.forEach(btn => btn.onclick = ()=> showTab(btn.dataset.tab));
+  // Hamburger menu for mobile
+  document.getElementById('hamburgerBtn').onclick = ()=> {
+    navTabs.classList.toggle('open');
+  }
+  // Update visible section by URL hash
+  if(location.hash) {
+    const hashTab = location.hash.slice(1);
+    if(document.getElementById(hashTab)) showTab(hashTab);
+  }
+  // Resume Button
+  document.getElementById('resumeBtn').onclick = function() {
+    window.open('https://drive.google.com/file/d/1ibkRWFhp-2fXlFCOISZOePo6iTcC4Mot/view?usp=drive_link','_blank');
+  };
 
-			<div class="nav-section">
-				<div class="nav-label">Overview</div>
-				<div class="nav-item active" onclick="go('dashboard')" id="nav-dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
-			</div>
+  // ATS SCORE CHECKER
+  document.getElementById('atsCheckBtn').onclick = function() {
+    const jd = document.getElementById('atsJobDesc').value;
+    const resume = document.getElementById('atsResume').value;
+    if(!jd.trim()||!resume.trim()){
+      document.getElementById('ats-result').textContent = "Paste both JD and Resume!";
+      return;
+    }
+    function extractKeywords(text) {
+      return Array.from(
+        new Set(
+          text.toLowerCase()
+          .replace(/[^a-z0-9\s]/gi, " ")
+          .replace(/[\r\n]/g, " ")
+          .split(" ")
+          .filter(w => w.length > 3 && !["internship","internships","about","role","company","work","will","you","your","skills","with","for","not","the","and","are","that","from","apply","have","has","should","must","good","can"].includes(w))
+        )
+      );
+    }
+    const jdKw   = extractKeywords(jd);
+    const resKw  = extractKeywords(resume);
+    if(jdKw.length < 8) {
+      document.getElementById('ats-result').textContent = "JD too short. Paste full job description.";
+      return;
+    }
+    let count = 0;
+    jdKw.forEach(kw=>{
+      if(resKw.includes(kw)) count++;
+    });
+    const pct = Math.round((count/jdKw.length)*100);
+    let msg = pct+"% match";
+    if (pct>=70) msg += " 👍 High";
+    else if (pct>=40) msg += " 🟡 Moderate";
+    else msg += " ⚠️ Add more keywords!";
+    document.getElementById('ats-result').textContent = msg;
+  };
 
-			<div class="nav-section">
-				<div class="nav-label">Applications</div>
-				<div class="nav-item" onclick="go('tracker')" id="nav-tracker"><i class="ti ti-table"></i> Tracker</div>
-				<div class="nav-item" onclick="go('ats')" id="nav-ats"><i class="ti ti-file-check"></i> ATS scores</div>
-			</div>
+  // APPLICATION DATA (localStorage)
+  const APPS_KEY = "internos_apps";
+  function loadApplications() {
+    try { return JSON.parse(localStorage.getItem(APPS_KEY)||"[]"); }
+    catch { return []; }
+  }
+  function saveApplications(list) {
+    localStorage.setItem(APPS_KEY, JSON.stringify(list));
+  }
+  function renderApplications() {
+    const apps = loadApplications();
+    const el = document.getElementById('applicationsList');
+    if (apps.length === 0) {
+      el.innerHTML = `<div class="empty-state">No applications yet. Add your first one.</div>`;
+    } else {
+      el.innerHTML = `<table class="apps-table">
+      <tr>
+        <th>#</th>
+        <th>Company</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Link</th>
+        <th>Notes</th>
+        <th></th>
+      </tr>` + apps.map((app, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${app.company}</td>
+        <td>${app.role}</td>
+        <td><span class="status-badge ${app.status}">${statusName(app.status)}</span></td>
+        <td>${app.date||'-'}</td>
+        <td>${app.link ? `<a href="${app.link}" target="_blank" rel="noopener">View</a>` : ''}</td>
+        <td>${app.notes ? app.notes : ''}</td>
+        <td><button onclick="deleteApplication(${i})" title="Delete">&#x2715;</button></td>
+      </tr>
+      `).join("")+"</table>";
+    }
+    renderDashboard();
+    renderTracker();
+  }
+  function statusName(status) {
+    return {
+      "to-apply":"To Apply",
+      "applied":"Applied",
+      "oa-pending":"OA Pending",
+      "interview":"Interview",
+      "rejected":"Rejected",
+      "selected":"Selected"
+    }[status] || status;
+  }
+  // Form: Add Application
+  document.getElementById('addAppForm').onsubmit = function(e) {
+    e.preventDefault();
+    const company = document.getElementById('appCompany').value.trim();
+    const role    = document.getElementById('appRole').value.trim();
+    const status  = document.getElementById('appStatus').value;
+    const date    = document.getElementById('appDate').value || "";
+    const link    = document.getElementById('appLink').value.trim();
+    const notes   = document.getElementById('appNotes').value.trim();
+    if (!company || !role || !status) return;
+    const apps = loadApplications();
+    apps.unshift({company,role,status,date,link,notes});
+    saveApplications(apps);
+    this.reset();
+    renderApplications();
+  };
+  // Delete Application
+  window.deleteApplication = function(idx){
+    if(!confirm("Delete this application?"))return;
+    const apps = loadApplications();
+    apps.splice(idx,1);
+    saveApplications(apps);
+    renderApplications();
+  }
+  // DASHBOARD: List latest applications with empty state
+  function renderDashboard() {
+    const apps = loadApplications();
+    const dash = document.getElementById('dashboardApps');
+    if (apps.length === 0) {
+      dash.innerHTML = `<div class="empty-state">No applications yet. Add your first one.</div>`;
+      return;
+    }
+    const summary = {
+      "to-apply":0,
+      "applied":0,
+      "oa-pending":0,
+      "interview":0,
+      "rejected":0,
+      "selected":0
+    };
+    apps.forEach(a=>{ if(summary[a.status]!==undefined)summary[a.status]++; });
+    dash.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:1.6em 2.5em;align-items:center;margin-bottom:1.4em;">
+         ${Object.entries(summary).map(([k,v]) =>
+          `<span class="status-badge ${k}" style="font-size:1.18em;">${statusName(k)}: ${v}</span>`).join("")
+         }
+      </div>
+      <h3 style="font-size:1.07em;margin-top:0;">Latest Applications</h3>
+      <table class="apps-table"><tr>
+        <th>Company</th><th>Role</th><th>Status</th>
+        <th>Date</th><th>Link</th>
+      </tr>
+      ${
+        apps.slice(0,5).map(a=>`
+        <tr>
+          <td>${a.company}</td>
+          <td>${a.role}</td>
+          <td><span class="status-badge ${a.status}">${statusName(a.status)}</span></td>
+          <td>${a.date||"-"}</td>
+          <td>${a.link?`<a href="${a.link}" target="_blank" rel="noopener">View</a>`:""}</td>
+        </tr>`).join("")
+      }
+      </table>
+      <div style="color:var(--grey);font-size:.96em;">(See full list in Applications tab)</div>
+    `;
+  }
+  // TRACKER: List all applications with color-coded status, date, link
+  function renderTracker(){
+    const apps = loadApplications();
+    const tracker = document.getElementById('trackerList');
+    if (apps.length===0){
+      tracker.innerHTML = `<div class="empty-state">No applications yet. Add your first one.</div>`;
+      return;
+    }
+    tracker.innerHTML = `<table class="tracker-table"><tr>
+      <th>Company</th><th>Role</th><th>Status</th>
+      <th>Date</th><th>Link</th>
+    </tr>${
+      apps.map(a=>`
+        <tr>
+          <td>${a.company}</td>
+          <td>${a.role}</td>
+          <td><span class="status-badge ${a.status}">${statusName(a.status)}</span></td>
+          <td>${a.date||'-'}</td>
+          <td>${a.link?`<a href="${a.link}" target="_blank" rel="noopener">View</a>`:""}</td>
+        </tr>`).join("")
+    }</table>`;
+  }
+  renderApplications();
 
-			<div class="nav-section">
-				<div class="nav-label">Planning</div>
-				<div class="nav-item" onclick="go('skills')" id="nav-skills"><i class="ti ti-chart-dots"></i> Skills</div>
-				<div class="nav-item" onclick="go('sources')" id="nav-sources"><i class="ti ti-world"></i> Sources</div>
-				<div class="nav-item" onclick="go('weekly')" id="nav-weekly"><i class="ti ti-calendar-week"></i> Weekly plan</div>
-			</div>
+  // WEEKLY PLAN — seven columns editable, persistent in localStorage
+  const WEEK_KEY = "internos_weekplan";
+  function renderWeeklyPlan(){
+    const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    const week = JSON.parse(localStorage.getItem(WEEK_KEY) || "[]");
+    const plan = document.getElementById('weeklyPlan');
+    plan.innerHTML = days.map((d,i)=>`
+      <div class="day-card">
+        <h4>${d}</h4>
+        <textarea class="day-input" id="day${i}" rows="5" placeholder="Enter task(s)">${week[i]||""}</textarea>
+      </div>
+    `).join('');
+    plan.querySelectorAll('textarea').forEach((txt,i)=>{
+      txt.oninput = function(){
+        let val = this.value;
+        let copy = Array.from(document.querySelectorAll('.day-input')).map(t=>t.value);
+        localStorage.setItem(WEEK_KEY, JSON.stringify(copy));
+      }
+    });
+  }
+  renderWeeklyPlan();
 
-			<div class="sidebar-footer">
-				<div class="label">Target window</div>
-				<div class="value">Jul 2026 – Jun 2027</div>
-			</div>
-		</div>
+  // On page show: reload data if storage changes
+  window.addEventListener('storage', function(e){
+    if(e.key===APPS_KEY) renderApplications();
+    if(e.key===WEEK_KEY) renderWeeklyPlan();
+  });
+  // Fix: update weekly planner and dashboard instantly on tab click
+  tabs.forEach(btn=>btn.addEventListener('click',()=>{
+    if(btn.dataset.tab==="weekly") renderWeeklyPlan();
+    if(btn.dataset.tab==="dashboard") renderDashboard();
+  }));
 
-		<!-- Main -->
-		<div class="main">
-			<div class="topbar">
-				<div class="topbar-title" id="page-title">Dashboard</div>
-				<div class="topbar-actions">
-					<button class="btn" onclick="openModal()"><i class="ti ti-plus"></i> Add application</button>
-				</div>
-			</div>
+  // Accessibility: skip-link target
+  document.querySelector('.skip-link').onclick = ()=>{
+    document.getElementById('main-content').tabIndex = -1;
+    document.getElementById('main-content').focus();
+  };
 
-			<div class="content" id="content"></div>
-		</div>
-	</div>
-
-	<!-- Add Modal -->
-	<div class="overlay" id="overlay">
-		<div class="modal">
-			<div class="modal-title">
-				New application
-				<button class="btn" onclick="closeModal()" style="padding:4px 8px;">
-					<i class="ti ti-x"></i>
-				</button>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group">
-					<label class="form-label">Company</label>
-					<input class="form-input" id="f-company" placeholder="e.g. Deloitte" />
-				</div>
-				<div class="form-group">
-					<label class="form-label">Role</label>
-					<input class="form-input" id="f-role" placeholder="e.g. Business Analyst Intern" />
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group">
-					<label class="form-label">Role type</label>
-					<select class="form-input" id="f-type">
-						<option>Data Analyst</option>
-						<option>Business Analyst</option>
-						<option>Research Analyst</option>
-						<option>Strategy</option>
-						<option>Consulting</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label class="form-label">Status</label>
-					<select class="form-input" id="f-status">
-						<option value="toapply">To Apply</option>
-						<option value="applied">Applied</option>
-						<option value="oa">OA Pending</option>
-						<option value="interview">Interview</option>
-						<option value="rejected">Rejected</option>
-						<option value="selected">Selected</option>
-					</select>
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group">
-					<label class="form-label">Mode</label>
-					<select class="form-input" id="f-mode">
-						<option>Remote</option>
-						<option>Hybrid</option>
-						<option>Onsite</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label class="form-label">Tier</label>
-					<select class="form-input" id="f-tier">
-						<option value="1">Tier 1 — Big4/MBB/FAANG</option>
-						<option value="2">Tier 2 — Startup</option>
-						<option value="3">Tier 3 — Research/Govt</option>
-					</select>
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group">
-					<label class="form-label">Stipend (₹/month)</label>
-					<input class="form-input" id="f-stipend" type="number" placeholder="e.g. 25000" />
-				</div>
-				<div class="form-group">
-					<label class="form-label">Deadline</label>
-					<input class="form-input" id="f-deadline" type="date" />
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="form-label">Apply link</label>
-				<input class="form-input" id="f-link" placeholder="https://..." />
-			</div>
-
-			<div class="form-group">
-				<label class="form-label">ATS score %</label>
-				<input class="form-input" id="f-ats" type="number" min="0" max="100" placeholder="e.g. 78" />
-			</div>
-
-			<div class="form-group">
-				<label class="form-label">Notes</label>
-				<textarea class="form-input" id="f-notes" rows="2" placeholder="HR contact, referral, follow-up date..."></textarea>
-			</div>
-
-			<div class="modal-actions">
-				<button class="btn" onclick="closeModal()">Cancel</button>
-				<button class="btn btn-primary" onclick="saveEntry()">Save</button>
-			</div>
-		</div>
-	</div>
-
-	<script>
-		// ── Data ──
-		let apps = JSON.parse(localStorage.getItem('internos_apps') || 'null') || [
-			{ id: 1, company: 'Deloitte', role: 'Business Analyst Intern', type: 'Business Analyst', status: 'interview', mode: 'Remote', tier: '1', stipend: 40000, deadline: '2026-07-15', link: 'https://deloitte.com/careers', ats: 85, notes: 'Round 2 scheduled', date: '2026-05-10' },
-			{ id: 2, company: 'McKinsey', role: 'Research Analyst Intern', type: 'Research Analyst', status: 'applied', mode: 'Onsite', tier: '1', stipend: 60000, deadline: '2026-07-01', link: 'https://mckinsey.com/careers', ats: 72, notes: 'Referral from alumni', date: '2026-05-14' },
-			{ id: 3, company: 'Swiggy', role: 'Data Analyst Intern', type: 'Data Analyst', status: 'oa', mode: 'Remote', tier: '2', stipend: 20000, deadline: '2026-07-20', link: 'https://careers.swiggy.com', ats: 80, notes: 'OA sent via email', date: '2026-05-12' },
-			{ id: 4, company: 'NITI Aayog', role: 'Research Intern', type: 'Research Analyst', status: 'toapply', mode: 'Onsite', tier: '3', stipend: 15000, deadline: '2026-08-01', link: 'https://niti.gov.in', ats: 68, notes: '', date: '2026-05-20' },
-			{ id: 5, company: 'Meesho', role: 'Strategy Intern', type: 'Business Analyst', status: 'rejected', mode: 'Remote', tier: '1', stipend: 35000, deadline: '2026-06-30', link: 'https://meesho.io/careers', ats: 61, notes: 'No feedback given', date: '2026-05-05' },
-			{ id: 6, company: 'YC Startup', role: 'Data Analyst Intern', type: 'Data Analyst', status: 'selected', mode: 'Remote', tier: '2', stipend: 18000, deadline: '2026-06-15', link: 'https://wellfound.com', ats: 90, notes: 'Offer received!', date: '2026-05-01' },
-			{ id: 7, company: 'BCG', role: 'Consulting Intern', type: 'Consulting', status: 'toapply', mode: 'Hybrid', tier: '1', stipend: 70000, deadline: '2026-09-01', link: 'https://bcg.com/careers', ats: 55, notes: 'Need stronger case prep', date: '2026-05-22' },
-			{ id: 8, company: 'Brookings India', role: 'Research Analyst', type: 'Research Analyst', status: 'applied', mode: 'Remote', tier: '3', stipend: 12000, deadline: '2026-07-10', link: 'https://brookings.edu', ats: 75, notes: '', date: '2026-05-18' },
-		];
-
-		let nextId = apps.reduce((m, a) => Math.max(m, a.id), 0) + 1;
-		let activeTab = 'dashboard';
-		let filterStatus = 'all';
-		let searchQ = '';
-
-		function save() { localStorage.setItem('internos_apps', JSON.stringify(apps)); }
-
-		const STATUS = { toapply: 'To Apply', applied: 'Applied', oa: 'OA Pending', interview: 'Interview', rejected: 'Rejected', selected: 'Selected' };
-		const SBADGE = { toapply: 'b-toapply', applied: 'b-applied', oa: 'b-oa', interview: 'b-interview', rejected: 'b-rejected', selected: 'b-selected' };
-		const TIER = { '1': 'Tier 1', '2': 'Tier 2', '3': 'Tier 3' };
-		const TBADGE = { '1': 't1', '2': 't2', '3': 't3' };
-
-		// ── Routing ──
-		function go(tab) {
-			activeTab = tab;
-			document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-			const nav = document.getElementById('nav-' + tab);
-			if (nav) nav.classList.add('active');
-
-			const titles = { dashboard: 'Dashboard', tracker: 'Application tracker', ats: 'ATS scores', skills: 'Skills', sources: 'Internship sources', weekly: 'Weekly plan' };
-			document.getElementById('page-title').textContent = titles[tab] || 'InternOS';
-			render();
-		}
-
-		function render() {
-			const el = document.getElementById('content');
-			if (activeTab === 'dashboard') el.innerHTML = renderDashboard();
-			else if (activeTab === 'tracker') el.innerHTML = renderTracker();
-			else if (activeTab === 'ats') el.innerHTML = renderATS();
-			else if (activeTab === 'skills') el.innerHTML = renderSkills();
-			else if (activeTab === 'sources') el.innerHTML = renderSources();
-			else if (activeTab === 'weekly') el.innerHTML = renderWeekly();
-		}
-
-		// ── Dashboard ──
-		function renderDashboard() {
-			const total = apps.length;
-			const applied = apps.filter(a => a.status !== 'toapply').length;
-			const interviews = apps.filter(a => a.status === 'interview').length;
-			const selected = apps.filter(a => a.status === 'selected').length;
-			const rr = applied > 0 ? Math.round((interviews + selected) / applied * 100) : 0;
-
-			const atsList = apps.filter(a => a.ats);
-			const avgATS = atsList.length ? Math.round(atsList.reduce((s, a) => s + a.ats, 0) / atsList.length) : 0;
-
-			const byType = {};
-			apps.forEach(a => { byType[a.type] = (byType[a.type] || 0) + 1; });
-			const sortedTypes = Object.entries(byType).sort((a, b) => b[1] - a[1]);
-			const barMax = Math.max(1, ...sortedTypes.map(x => x[1]));
-			const bars = sortedTypes.map(([l, v]) => `
-				<div class="bar-row">
-					<div class="bar-label">${l}</div>
-					<div class="bar-track"><div class="bar-fill" style="width:${Math.round(v / barMax * 100)}%">${v}</div></div>
-				</div>
-			`).join('');
-
-			const recent = [...apps].sort((a, b) => b.id - a.id).slice(0, 5);
-			const rows = recent.map(a => `
-				<tr>
-					<td style="font-weight:500;">${a.company}</td>
-					<td style="color:var(--muted);font-size:11.5px;">${a.role}</td>
-					<td><span class="badge ${SBADGE[a.status]}">${STATUS[a.status]}</span></td>
-					<td style="color:${a.ats >= 75 ? '#1D9E75' : a.ats >= 60 ? '#b45309' : '#b91c1c'};font-weight:500;font-family:var(--font-mono);">${a.ats || '—'}%</td>
-				</tr>
-			`).join('');
-
-			return `
-				<div class="metrics">
-					<div class="metric-card"><div class="metric-label">tracked</div><div class="metric-value">${total}</div><div class="metric-sub">total opportunities</div></div>
-					<div class="metric-card"><div class="metric-label">applied</div><div class="metric-value">${applied}</div><div class="metric-sub green">${Math.round(applied / total * 100) || 0}% of pipeline</div></div>
-					<div class="metric-card"><div class="metric-label">response rate</div><div class="metric-value">${rr}%</div><div class="metric-sub">${interviews} interviews · ${selected} offers</div></div>
-					<div class="metric-card"><div class="metric-label">avg ATS score</div><div class="metric-value">${avgATS}%</div><div class="metric-sub">across all applications</div></div>
-				</div>
-
-				<div class="two-col">
-					<div>
-						<div class="section-head"><div class="section-label">Applications by type</div></div>
-						${bars}
-					</div>
-
-					<div>
-						<div class="section-head"><div class="section-label">Recent entries</div></div>
-						<div class="table-wrap">
-							<table>
-								<thead><tr><th>Company</th><th>Role</th><th>Status</th><th>ATS</th></tr></thead>
-								<tbody>${rows}</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			`;
-		}
-
-		// ── Tracker ──
-		function renderTracker() {
-			let filtered = apps.filter(a => {
-				const ms = filterStatus === 'all' || a.status === filterStatus;
-				const mq = !searchQ || a.company.toLowerCase().includes(searchQ) || a.role.toLowerCase().includes(searchQ);
-				return ms && mq;
-			});
-
-			const statuses = ['all', 'toapply', 'applied', 'oa', 'interview', 'selected', 'rejected'];
-			const fbts = statuses.map(s => `
-				<button class="filter-btn ${filterStatus === s ? 'active' : ''}" onclick="setFilter('${s}')">
-					${s === 'all' ? 'All' : STATUS[s]}
-				</button>
-			`).join('');
-
-			const rows = filtered.length ? filtered.map(a => `
-				<tr>
-					<td style="font-weight:500;">${a.company}</td>
-					<td style="color:var(--muted);font-size:11.5px;">${a.role}</td>
-					<td><span class="badge ${TBADGE[a.tier]}">${TIER[a.tier]}</span></td>
-					<td><span class="badge ${SBADGE[a.status]}">${STATUS[a.status]}</span></td>
-					<td style="color:var(--muted);">${a.mode}</td>
-					<td style="font-family:var(--font-mono);font-size:11.5px;">${a.stipend ? '₹' + a.stipend.toLocaleString() : '—'}</td>
-					<td style="font-family:var(--font-mono);color:${a.ats >= 75 ? '#1D9E75' : a.ats >= 60 ? '#b45309' : '#b91c1c'};font-weight:500;">${a.ats || '—'}%</td>
-					<td style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">${a.deadline || '—'}</td>
-					<td><a href="${a.link}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link"></i></a></td>
-					<td><button class="btn" style="padding:3px 8px;font-size:11px;" onclick="deleteEntry(${a.id})"><i class="ti ti-trash"></i></button></td>
-				</tr>
-			`).join('') : `
-				<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--muted);">No entries match.</td></tr>
-			`;
-
-			return `
-				<div class="filter-row">
-					<input class="search-input" placeholder="Search company or role..." oninput="setSearch(this.value)" value="${searchQ}">
-					${fbts}
-				</div>
-
-				<div class="table-wrap">
-					<table style="table-layout:fixed;">
-						<colgroup>
-							<col width="12%"><col width="17%"><col width="7%"><col width="10%"><col width="7%">
-							<col width="9%"><col width="6%"><col width="10%"><col width="4%"><col width="4%">
-						</colgroup>
-						<thead>
-							<tr><th>Company</th><th>Role</th><th>Tier</th><th>Status</th><th>Mode</th><th>Stipend</th><th>ATS</th><th>Deadline</th><th></th><th></th></tr>
-						</thead>
-						<tbody>${rows}</tbody>
-					</table>
-				</div>
-
-				<div class="footer-count">${filtered.length} of ${apps.length} entries shown</div>
-			`;
-		}
-
-		// ── ATS ──
-		function renderATS() {
-			const sorted = [...apps].filter(a => a.ats).sort((a, b) => b.ats - a.ats);
-			const allKw = ['Excel','Power BI','SQL','Research','Analytics','Communication','Python','Statistics','Presentation','Data storytelling'];
-
-			const cards = sorted.map(a => {
-				const matchCount = Math.floor(a.ats / 10);
-				const matched = allKw.slice(0, matchCount);
-				const missing = allKw.slice(matchCount, matchCount + 3);
-
-				const kwHtml = matched.map(k => `<span class="kw kw-match">${k}</span>`).join('')
-					+ missing.map(k => `<span class="kw kw-miss">${k}</span>`).join('');
-
-				const col = a.ats >= 75 ? '#1D9E75' : a.ats >= 60 ? '#d97706' : '#dc2626';
-
-				return `
-					<div class="ats-card">
-						<div class="ats-top">
-							<div>
-								<div class="ats-company">${a.company}</div>
-								<div class="ats-role-sub">${a.role} · ${a.mode} · ${a.type}</div>
-							</div>
-							<div class="ats-score" style="color:${col};">${a.ats}%</div>
-						</div>
-						<div class="progress-track"><div class="progress-fill" style="width:${a.ats}%;background:${col};"></div></div>
-						<div class="kw-wrap">${kwHtml}</div>
-					</div>
-				`;
-			}).join('');
-
-			return `<div style="font-size:12px;color:var(--muted);margin-bottom:14px;font-family:var(--font-mono);">Green = keyword matched · Red = gap to fix in resume before applying</div>${cards}`;
-		}
-
-		// ── Skills ──
-		function renderSkills() {
-			const skills = [
-				{ n: 'Excel', l: 'Intermediate', p: 60 },
-				{ n: 'SQL', l: 'Beginner', p: 25 },
-				{ n: 'Power BI', l: 'Beginner', p: 30 },
-				{ n: 'Statistics', l: 'Intermediate', p: 55 },
-				{ n: 'Research', l: 'Good', p: 75 },
-				{ n: 'Communication', l: 'Strong', p: 85 },
-				{ n: 'Python', l: 'Learning', p: 15 },
-				{ n: 'Data storytelling', l: 'Developing', p: 40 },
-			];
-
-			const cards = skills.map(s => `
-				<div class="skill-card">
-					<div class="skill-top"><div class="skill-name">${s.n}</div><div class="skill-level">${s.l}</div></div>
-					<div class="progress-track" style="height:4px;">
-						<div class="progress-fill" style="width:${s.p}%;background:${s.p >= 70 ? '#1D9E75' : s.p >= 40 ? '#d97706' : '#dc2626'};"></div>
-					</div>
-				</div>
-			`).join('');
-
-			return `
-				<div class="section-head"><div class="section-label">Skill readiness</div></div>
-				<div class="skills-grid">${cards}</div>
-				<div class="info-box">
-					<strong>Priority actions to improve your ATS hit rate</strong>
-					1. SQL — most requested in Data Analyst JDs. Start with SQLZoo or Mode Analytics (both free).<br>
-					2. Power BI — build one dashboard and publish it on LinkedIn. Instant resume line.<br>
-					3. Python (pandas + matplotlib) — covers 80% of analyst tasks.
-				</div>
-			`;
-		}
-
-		// ── Sources ──
-		function renderSources() {
-			const indian = [
-				{ n: 'LinkedIn', d: 'Best overall source', a: true },
-				{ n: 'Internshala', d: 'SME & startup internships', a: true },
-				{ n: 'Wellfound', d: 'Startup equity roles', a: true },
-				{ n: 'Unstop', d: 'Competitions + internships', a: true },
-				{ n: 'Naukri', d: 'Analyst roles', a: false },
-				{ n: 'LetsIntern', d: 'Early-stage startups', a: false },
-				{ n: 'AICTE Portal', d: 'Government opportunities', a: false },
-			];
-
-			const intl = [
-				{ n: 'Forage', d: 'Virtual experience — Deloitte, BCG etc.', a: true },
-				{ n: 'Parker Dewey', d: 'Micro-internships (US)', a: false },
-				{ n: 'We Work Remotely', d: 'Remote-only global roles', a: true },
-				{ n: 'AngelList', d: 'Global startup roles', a: false },
-				{ n: 'RippleMatch', d: 'US campus recruiting', a: false },
-				{ n: 'EU Careers', d: 'European opportunities', a: false },
-			];
-
-			const mkCards = list => list.map(p => `
-				<div class="platform-card">
-					<div class="platform-dot" style="background:${p.a ? '#1D9E75' : 'var(--border-mid)'};"></div>
-					<div>
-						<div class="platform-name">${p.n}</div>
-						<div class="platform-desc">${p.d}</div>
-					</div>
-				</div>
-			`).join('');
-
-			return `
-				<div class="section-head" style="margin-bottom:8px;"><div class="section-label">Indian platforms</div></div>
-				<div class="platforms-grid" style="margin-bottom:20px;">${mkCards(indian)}</div>
-
-				<div class="section-head" style="margin-bottom:8px;"><div class="section-label">International platforms</div></div>
-				<div class="platforms-grid">${mkCards(intl)}</div>
-
-				<div style="margin-top:12px;font-size:11.5px;color:var(--muted);font-family:var(--font-mono);">
-					Green = actively recommended to start with · Set Google Alerts for "Remote Data Analyst Internship", "Business Analyst Internship India"
-				</div>
-			`;
-		}
-
-		// ── Weekly ──
-		function renderWeekly() {
-			const days = [
-				{ n: 'Mon', t: 'Search internships\nSave to tracker' },
-				{ n: 'Tue', t: 'ATS check\nTailor resume' },
-				{ n: 'Wed', t: 'Apply ×5\nNetworking' },
-				{ n: 'Thu', t: 'SQL practice\nPower BI' },
-				{ n: 'Fri', t: 'LinkedIn post\nRecruiter DMs' },
-				{ n: 'Sat', t: 'Mock interview\nCase study' },
-				{ n: 'Sun', t: 'Dashboard review\nWeekly metrics' },
-			];
-
-			const cards = days.map(d => `
-				<div class="day-card">
-					<div class="day-name">${d.n}</div>
-					<div class="day-tasks">${d.t.replace(/\n/g, '<br>')}</div>
-				</div>
-			`).join('');
-
-			return `
-				<div class="section-head"><div class="section-label">Weekly system</div></div>
-				<div class="week-grid">${cards}</div>
-
-				<div class="info-box">
-					<strong>Rules that separate disciplined candidates from random applicants</strong>
-					— Never apply without tailoring the resume to the specific JD first.<br>
-					— Log every application. If it's not in the tracker, it doesn't count.<br>
-					— Set a follow-up reminder 7 days after applying.<br>
-					— Target: 5 quality applications/week. Not 50 blind ones.
-				</div>
-			`;
-		}
-
-		// ── Actions ──
-		function setFilter(s) { filterStatus = s; render(); }
-		function setSearch(v) { searchQ = (v || '').toLowerCase(); render(); }
-
-		function deleteEntry(id) {
-			apps = apps.filter(a => a.id !== id);
-			save();
-			render();
-		}
-
-		function openModal() { document.getElementById('overlay').classList.add('open'); }
-		function closeModal() {
-			document.getElementById('overlay').classList.remove('open');
-			['company','role','stipend','deadline','link','ats','notes'].forEach(f => {
-				const el = document.getElementById('f-' + f);
-				if (el) el.value = '';
-			});
-		}
-
-		function saveEntry() {
-			const entry = {
-				id: nextId++,
-				company: document.getElementById('f-company').value.trim() || 'Unnamed',
-				role: document.getElementById('f-role').value.trim() || 'Intern',
-				type: document.getElementById('f-type').value,
-				status: document.getElementById('f-status').value,
-				mode: document.getElementById('f-mode').value,
-				tier: document.getElementById('f-tier').value,
-				stipend: parseInt(document.getElementById('f-stipend').value, 10) || 0,
-				deadline: document.getElementById('f-deadline').value,
-				link: document.getElementById('f-link').value.trim() || '#',
-				ats: parseInt(document.getElementById('f-ats').value, 10) || 0,
-				notes: document.getElementById('f-notes').value,
-				date: new Date().toISOString().split('T')[0],
-			};
-
-			apps.unshift(entry);
-			save();
-			closeModal();
-			go('tracker');
-		}
-
-		// Init
-		render();
-	</script>
+  // (Optional) Favicon fallback if missing
+  (function ensureFavicon(){
+    var links = document.querySelectorAll('link[rel="icon"]');
+    if(!links.length){
+      var l=document.createElement('link');
+      l.rel="icon"; l.type="image/png"; l.href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAEklEQVR4AWMgFvAQmBgAAAB0AAWJcczNAAAAAElFTkSuQmCC";
+      document.head.appendChild(l);
+    }
+  })();
+</script>
 </body>
 </html>
