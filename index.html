@@ -314,6 +314,193 @@
       margin:2em auto 1em auto;
       max-width:400px;
     }
+
+    /* ── AI Assistant ── */
+    .ai-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 150;
+    }
+    .ai-btn:hover { background: var(--accent); transform: scale(1.1); }
+
+    .ai-panel {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 380px;
+      height: 500px;
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      display: none;
+      flex-direction: column;
+      z-index: 200;
+      animation: slideUp 0.3s ease;
+    }
+    .ai-panel.open { display: flex; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ai-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ai-title { font-size: 13px; font-weight: 600; }
+    .ai-close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--grey);
+      font-size: 18px;
+    }
+    .ai-close-btn:hover { color: var(--text); }
+
+    .ai-setup {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ai-setup-label { font-size: 12px; color: var(--grey); font-weight: 500; }
+    .ai-setup-input {
+      width: 100%;
+      padding: 8px 11px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      color: var(--text);
+    }
+    .ai-setup-input:focus { outline: none; border-color: var(--accent); }
+    .ai-setup-btn {
+      padding: 8px 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ai-setup-btn:hover { background: var(--primary); }
+    .ai-setup-link { font-size: 11px; text-align: center; margin-top: 6px; }
+    .ai-setup-link a { color: var(--accent); text-decoration: none; }
+    .ai-setup-link a:hover { text-decoration: underline; }
+
+    .ai-chat { display: none; position: relative; width: 100%; height: 100%; }
+    .ai-chat.open { display: flex; flex-direction: column; }
+
+    .ai-messages { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 12px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px;
+    }
+    .ai-message {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .ai-message.user { justify-content: flex-end; }
+    .ai-message.bot { justify-content: flex-start; }
+    .ai-msg-bubble {
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+    .ai-message.user .ai-msg-bubble { background: var(--accent); color: #fff; }
+    .ai-message.bot .ai-msg-bubble { background: #f0f0f0; color: var(--text); }
+
+    .ai-typing {
+      display: flex;
+      gap: 4px;
+      padding: 8px 12px;
+    }
+    .ai-dot { 
+      width: 6px; 
+      height: 6px; 
+      border-radius: 50%; 
+      background: var(--grey); 
+      animation: bounce 1.4s infinite;
+    }
+    .ai-dot:nth-child(2) { animation-delay: 0.2s; }
+    .ai-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 80%, 100% { opacity: 0.4; } 40% { opacity: 1; } }
+
+    .ai-chips {
+      padding: 0 12px 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .ai-chip {
+      padding: 6px 10px;
+      background: #f0f0f0;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.1s;
+    }
+    .ai-chip:hover { background: var(--accent); color: #fff; }
+
+    .ai-input-box {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+    .ai-input-field {
+      flex: 1;
+      padding: 8px 11px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      color: var(--text);
+    }
+    .ai-input-field:focus { outline: none; border-color: var(--accent); }
+    .ai-send-btn {
+      padding: 8px 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ai-send-btn:hover { background: var(--primary); }
+    .ai-send-btn:disabled { background: var(--grey); cursor: not-allowed; }
+
     /* RESPONSIVE */
     @media (max-width:850px) {
       main { padding: .5em; }
@@ -347,6 +534,14 @@
       .hamburger { display: flex;}
       main { padding:.24em;}
       .weekly-plan {gap: .4em;}
+      .ai-panel {
+        width: 100%;
+        height: 100%;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+      }
+      .ai-btn { bottom: 20px; right: 20px; }
     }
     /* Hide skip-link visually except for screen readers and on focus for accessibility */
     .skip-link {
@@ -539,7 +734,207 @@
       <div class="weekly-plan" id="weeklyPlan"></div>
     </section>
   </main>
+
+  <!-- AI Assistant -->
+  <button class="ai-btn" id="aiBtnToggle" aria-label="Open AI Assistant">💬</button>
+
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-header">
+      <div class="ai-title">InternOS Assistant</div>
+      <button class="ai-close-btn" id="aiCloseBtn" aria-label="Close AI Assistant">✕</button>
+    </div>
+
+    <div id="aiSetup" class="ai-setup">
+      <label class="ai-setup-label">Claude API Key</label>
+      <input type="password" class="ai-setup-input" id="apiKeyInput" placeholder="sk-ant-..." />
+      <button class="ai-setup-btn" onclick="saveAPIKey()">Save API Key</button>
+      <div class="ai-setup-link">
+        <a href="https://console.anthropic.com" target="_blank">Get API Key →</a>
+      </div>
+    </div>
+
+    <div id="aiChat" class="ai-chat">
+      <div class="ai-messages" id="aiMessages"></div>
+      <div id="aiChips" class="ai-chips"></div>
+      <div class="ai-input-box">
+        <input type="text" class="ai-input-field" id="aiInput" placeholder="Ask me anything..." />
+        <button class="ai-send-btn" id="aiSendBtn" onclick="sendAIMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
 <script>
+  // ── AI Assistant Configuration ──
+  const AI_SYSTEM_PROMPT = `You are InternOS Assistant, a career advisor specialized in internship hunting for Indian business school students (IIM, XLRI, FMS, etc.).
+
+You help with:
+- Finding internships on LinkedIn, Wellfound, Internshala, Unstop, Naukri, IIMJobs
+- Writing cold emails to recruiters
+- Improving resume bullets for specific roles
+- ATS keyword optimization for job descriptions
+- Interview prep (case studies, HR questions, guesstimates)
+- Deciding which roles to apply for based on the user's profile
+- Drafting follow-up messages after applying
+
+When suggesting job portals, always give the direct search URL. Be concise, actionable, and specific. Avoid vague advice.
+
+The user is an IPM student at IIM Bodh Gaya targeting Data Analyst, Business Analyst, Strategy, Consulting, and Research roles.`;
+
+  const STARTER_CHIPS = [
+    "Find Data Analyst internships",
+    "Write a cold email to a recruiter",
+    "Check my resume for ATS",
+    "Prep me for a BA interview"
+  ];
+
+  let aiApiKey = localStorage.getItem('internos_ai_key') || '';
+  let aiMessages = JSON.parse(localStorage.getItem('internos_ai_messages') || '[]');
+  let aiWaitingForResponse = false;
+
+  function toggleAIPanel() {
+    const panel = document.getElementById('aiPanel');
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) {
+      initializeAIPanel();
+    }
+  }
+
+  function initializeAIPanel() {
+    const setupDiv = document.getElementById('aiSetup');
+    const chatDiv = document.getElementById('aiChat');
+    const messagesDiv = document.getElementById('aiMessages');
+    const chipsDiv = document.getElementById('aiChips');
+
+    if (aiApiKey) {
+      setupDiv.style.display = 'none';
+      chatDiv.classList.add('open');
+      renderAIMessages();
+      if (aiMessages.length === 0) {
+        chipsDiv.innerHTML = STARTER_CHIPS.map(chip => 
+          `<button class="ai-chip" onclick="sendAIChip('${chip}')">${chip}</button>`
+        ).join('');
+      } else {
+        chipsDiv.innerHTML = '';
+      }
+    } else {
+      setupDiv.style.display = 'flex';
+      chatDiv.classList.remove('open');
+    }
+  }
+
+  function saveAPIKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) {
+      alert('Please enter your Claude API key');
+      return;
+    }
+    aiApiKey = key;
+    localStorage.setItem('internos_ai_key', key);
+    initializeAIPanel();
+  }
+
+  function sendAIChip(text) {
+    const input = document.getElementById('aiInput');
+    input.value = text;
+    sendAIMessage();
+  }
+
+  function sendAIMessage() {
+    const input = document.getElementById('aiInput');
+    const message = input.value.trim();
+    if (!message || aiWaitingForResponse) return;
+
+    aiMessages.push({ role: 'user', content: message });
+    input.value = '';
+    renderAIMessages();
+    document.getElementById('aiChips').innerHTML = '';
+
+    aiWaitingForResponse = true;
+    const messagesDiv = document.getElementById('aiMessages');
+    messagesDiv.innerHTML += `
+      <div class="ai-message bot">
+        <div class="ai-typing">
+          <div class="ai-dot"></div>
+          <div class="ai-dot"></div>
+          <div class="ai-dot"></div>
+        </div>
+      </div>
+    `;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    callClaudeAPI(message);
+  }
+
+  function callClaudeAPI(userMessage) {
+    const apiUrl = 'https://api.anthropic.com/v1/messages';
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': aiApiKey,
+      'anthropic-version': '2023-06-01'
+    };
+
+    const requestBody = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: AI_SYSTEM_PROMPT,
+      messages: aiMessages.map(m => ({ role: m.role, content: m.content }))
+    };
+
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestBody)
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`API Error: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const botMessage = data.content[0].text;
+      aiMessages.push({ role: 'assistant', content: botMessage });
+      localStorage.setItem('internos_ai_messages', JSON.stringify(aiMessages));
+      renderAIMessages();
+      aiWaitingForResponse = false;
+    })
+    .catch(err => {
+      const messagesDiv = document.getElementById('aiMessages');
+      messagesDiv.innerHTML = messagesDiv.innerHTML.replace(
+        /<div class="ai-message bot">[\s\S]*?<\/div>$/,
+        ''
+      );
+      aiMessages.push({ 
+        role: 'assistant', 
+        content: `⚠️ Error: ${err.message}. Please check your API key.` 
+      });
+      localStorage.setItem('internos_ai_messages', JSON.stringify(aiMessages));
+      renderAIMessages();
+      aiWaitingForResponse = false;
+    });
+  }
+
+  function renderAIMessages() {
+    const messagesDiv = document.getElementById('aiMessages');
+    messagesDiv.innerHTML = aiMessages.map(msg => `
+      <div class="ai-message ${msg.role}">
+        <div class="ai-msg-bubble">${msg.content}</div>
+      </div>
+    `).join('');
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  // AI Panel Event Listeners
+  document.getElementById('aiBtnToggle').onclick = toggleAIPanel;
+  document.getElementById('aiCloseBtn').onclick = toggleAIPanel;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.activeElement === document.getElementById('aiInput')) {
+      sendAIMessage();
+    }
+  });
+
+  // ────────────────────────────────────────────────────
   // NAVIGATION: Hamburger + Tabs
   const navTabs = document.getElementById('navTabs');
   const tabs = navTabs.querySelectorAll('button');
@@ -580,7 +975,7 @@
           .replace(/[^a-z0-9\s]/gi, " ")
           .replace(/[\r\n]/g, " ")
           .split(" ")
-          .filter(w => w.length > 3 && !["internship","internships","about","role","company","work","will","you","your","skills","with","for","not","the","and","are","that","from","apply","have","has","should","must","good","can"].includes(w))
+          .filter(w => w.length > 3 && !["internship","internships","about","role","company","work","will","you","your","skills","with","for","not","the","and","are","that","from","apply","have"].includes(w))
         )
       );
     }
