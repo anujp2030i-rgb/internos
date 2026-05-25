@@ -468,10 +468,136 @@
     .ai-send-btn:hover { background: var(--primary); }
     .ai-send-btn:disabled { background: var(--grey); cursor: not-allowed; }
 
+    /* Resume Selection Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 300;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      animation: fadeIn 0.3s ease;
+    }
+    .modal.open { display: flex; align-items: center; justify-content: center; }
+    .modal-content {
+      background-color: var(--card);
+      padding: 2em;
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      font-size: 1.3em;
+      font-weight: 600;
+      margin-bottom: 1em;
+      color: var(--primary);
+    }
+    .modal-body {
+      margin-bottom: 1.5em;
+    }
+    .resume-option {
+      padding: 1em;
+      margin-bottom: 0.8em;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .resume-option:hover {
+      border-color: var(--accent);
+      background: #f8fafc;
+    }
+    .resume-option-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.3em;
+    }
+    .resume-option-desc {
+      font-size: 0.9em;
+      color: var(--grey);
+    }
+    .modal-actions {
+      display: flex;
+      gap: 1em;
+    }
+    .modal-actions button {
+      flex: 1;
+    }
+    .btn-secondary {
+      background: var(--grey) !important;
+    }
+    .btn-secondary:hover {
+      background: #666 !important;
+    }
+
+    /* Company Career Portals Section */
+    .companies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.2em;
+      margin-bottom: 1em;
+    }
+    .company-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.2em;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .company-card:hover {
+      box-shadow: 0 6px 20px rgba(41,98,255,.12);
+      transform: translateY(-2px);
+    }
+    .company-logo {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+    .company-name {
+      font-weight: 600;
+      font-size: 1.05em;
+      margin-bottom: 0.3em;
+      color: var(--primary);
+    }
+    .company-type {
+      font-size: 0.85em;
+      color: var(--grey);
+      margin-bottom: 0.8em;
+    }
+    .company-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+    }
+    .company-link {
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5em 0.8em;
+      border-radius: var(--radius);
+      font-size: 0.9em;
+      display: inline-block;
+      text-align: center;
+      transition: background .2s;
+    }
+    .company-link:hover { background: var(--primary); }
+    .company-link.secondary {
+      background: #e0e3ee;
+      color: var(--primary);
+    }
+    .company-link.secondary:hover {
+      background: var(--border);
+    }
+
     /* RESPONSIVE */
     @media (max-width:850px) {
       main { padding: .5em; }
       .weekly-plan { gap: .4em; }
+      .companies-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
     }
     @media (max-width:720px) {
       .nav-tabs { gap: .1em;}
@@ -481,6 +607,7 @@
       .card-grid { grid-template-columns: repeat(auto-fit, minmax(165px,1fr));}
       .ats-wrapper { grid-template-columns: 1fr; gap: .7em; }
       .weekly-plan { grid-template-columns: repeat(2,1fr);}
+      .companies-grid { grid-template-columns: 1fr; }
     }
     @media (max-width:600px) {
       header { font-size:1em;}
@@ -509,6 +636,9 @@
         border-radius: 0;
       }
       .ai-btn { bottom: 20px; right: 20px; }
+      .modal-content {
+        width: 95%;
+      }
     }
     /* Hide skip-link visually except for screen readers and on focus for accessibility */
     .skip-link {
@@ -550,10 +680,11 @@
           <li><button data-tab="planning"   aria-label="Planning">Planning</button></li>
           <li><button data-tab="skills"     aria-label="Skills">Skills</button></li>
           <li><button data-tab="sources"    aria-label="Sources">Sources</button></li>
+          <li><button data-tab="companies"  aria-label="Companies">Companies</button></li>
           <li><button data-tab="weekly"     aria-label="Weekly Plan">Weekly Plan</button></li>
         </ul>
       </nav>
-      <button class="resume-btn" id="resumeBtn" tabindex="2" aria-label="My Resume">My Resume</button>
+      <button class="resume-btn" id="resumeBtn" tabindex="2" aria-label="My Resumes">📄 Resumes</button>
       <div class="hamburger" id="hamburgerBtn" tabindex="3" aria-label="Open menu">
         <div></div><div></div><div></div>
       </div>
@@ -571,6 +702,8 @@
         <li>Easily add, view & update all internship applications</li>
         <li>Compare resume with job descriptions using ATS Score</li>
         <li>Access India's top internship sources directly</li>
+        <li>Browse company career portals and apply directly</li>
+        <li>Select between multiple resumes based on role requirements</li>
         <li>Plan your week, manage skills, and more—100% private, data is stored in your browser</li>
       </ul>
     </section>
@@ -608,6 +741,12 @@
             <input type="url" id="appLink" placeholder="Job Link (optional)">
           </div>
         </div>
+        <label style="font-weight:500; margin-bottom: 0.3em; display:block;">Select Resume</label>
+        <select id="appResume" required style="margin-bottom: 1em;">
+          <option value="">Choose resume for this role</option>
+          <option value="general">General Resume</option>
+          <option value="technical">Technical Resume</option>
+        </select>
         <textarea id="appNotes" placeholder="Notes (optional)"></textarea>
         <button type="submit">Add Application</button>
       </form>
@@ -695,12 +834,38 @@
         </div>
       </div>
     </section>
+    <!-- COMPANIES TAB -->
+    <section id="companies">
+      <h2>Company Career Portals</h2>
+      <p style="color: var(--grey); margin-bottom: 1.5em;">Direct links to apply for internships at top companies, MNCs, and firms</p>
+      <div class="companies-grid" id="companiesGrid"></div>
+    </section>
     <!-- WEEKLY PLAN TAB -->
     <section id="weekly">
       <h2>Weekly Plan</h2>
       <div class="weekly-plan" id="weeklyPlan"></div>
     </section>
   </main>
+
+  <!-- Resume Selection Modal -->
+  <div class="modal" id="resumeModal">
+    <div class="modal-content">
+      <div class="modal-header">📄 Select Your Resume</div>
+      <div class="modal-body">
+        <div class="resume-option" onclick="openResume('general')">
+          <div class="resume-option-title">General Resume</div>
+          <div class="resume-option-desc">For diverse roles and companies</div>
+        </div>
+        <div class="resume-option" onclick="openResume('technical')">
+          <div class="resume-option-title">Technical Resume</div>
+          <div class="resume-option-desc">For technical & analytics roles</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeResumeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- AI Assistant -->
   <button class="ai-btn" id="aiBtnToggle" aria-label="Open AI Assistant">💬</button>
@@ -808,7 +973,6 @@
     `;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    // Simulate response delay
     setTimeout(() => {
       const response = getAIResponse(message);
       aiMessages.push({ role: 'assistant', content: response });
@@ -828,7 +992,6 @@
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
-  // AI Panel Event Listeners
   document.getElementById('aiBtnToggle').onclick = toggleAIPanel;
   document.getElementById('aiCloseBtn').onclick = toggleAIPanel;
 
@@ -837,6 +1000,222 @@
       sendAIMessage();
     }
   });
+
+  // ── Resume Modal Functions ──
+  function openResumeModal() {
+    document.getElementById('resumeModal').classList.add('open');
+  }
+  
+  function closeResumeModal() {
+    document.getElementById('resumeModal').classList.remove('open');
+  }
+
+  function openResume(type) {
+    window.open('https://drive.google.com/drive/folders/1BuEZ6fvs5lnYg50xZjSX9WM7DWAdT5iM?q=type:pdf%20parent:1BuEZ6fvs5lnYg50xZjSX9WM7DWAdT5iM%20owner:me%20sharedwith:public', '_blank');
+    closeResumeModal();
+  }
+
+  document.getElementById('resumeBtn').onclick = openResumeModal;
+
+  // ── Company Career Portals ──
+  const COMPANIES = [
+    {
+      name: 'McKinsey',
+      logo: '🎯',
+      type: 'Consulting',
+      careers: 'https://www.mckinsey.com/careers',
+      jobs: 'https://www.mckinsey.com/careers/search-jobs'
+    },
+    {
+      name: 'Boston Consulting Group',
+      logo: '💼',
+      type: 'Consulting',
+      careers: 'https://www.bcg.com/en-in/careers',
+      jobs: 'https://www.bcg.com/en-in/careers/job-openings'
+    },
+    {
+      name: 'Bain & Company',
+      logo: '📊',
+      type: 'Consulting',
+      careers: 'https://www.bain.com/careers/',
+      jobs: 'https://www.bain.com/careers/job-search/'
+    },
+    {
+      name: 'Goldman Sachs',
+      logo: '💰',
+      type: 'Finance',
+      careers: 'https://www.goldmansachs.com/careers/',
+      jobs: 'https://www.goldmansachs.com/careers/job-search/'
+    },
+    {
+      name: 'Morgan Stanley',
+      logo: '📈',
+      type: 'Finance',
+      careers: 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/user-interviews-ext/req-4/p-home/',
+      jobs: 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/user-interviews-ext/req-4/p-job-search/'
+    },
+    {
+      name: 'Deloitte',
+      logo: '🏛️',
+      type: 'Consulting & Audit',
+      careers: 'https://www2.deloitte.com/in/en/careers.html',
+      jobs: 'https://jobs.deloitte.com/in/en'
+    },
+    {
+      name: 'EY (Ernst & Young)',
+      logo: '🔷',
+      type: 'Consulting & Audit',
+      careers: 'https://www.ey.com/en_in/careers',
+      jobs: 'https://careers.ey.com/in/en/search-jobs'
+    },
+    {
+      name: 'KPMG',
+      logo: '📋',
+      type: 'Audit & Advisory',
+      careers: 'https://home.kpmg/in/en/careers.html',
+      jobs: 'https://careers.kpmg-india.com/'
+    },
+    {
+      name: 'PwC',
+      logo: '🔶',
+      type: 'Professional Services',
+      careers: 'https://www.pwc.in/en/careers.html',
+      jobs: 'https://jobs.pwc.com/in/en'
+    },
+    {
+      name: 'Flipkart',
+      logo: '📦',
+      type: 'E-commerce',
+      careers: 'https://www.flipkartcareers.com/',
+      jobs: 'https://www.flipkartcareers.com/jobs'
+    },
+    {
+      name: 'Amazon',
+      logo: '🛒',
+      type: 'Tech & E-commerce',
+      careers: 'https://www.amazon.jobs/en-in/',
+      jobs: 'https://www.amazon.jobs/en-in/search'
+    },
+    {
+      name: 'Google',
+      logo: '🔍',
+      type: 'Technology',
+      careers: 'https://careers.google.com/jobs/results/?location=India',
+      jobs: 'https://careers.google.com/jobs/results/?company=Google&location=India'
+    },
+    {
+      name: 'Microsoft',
+      logo: '🪟',
+      type: 'Technology',
+      careers: 'https://careers.microsoft.com/us/en/search-jobs',
+      jobs: 'https://careers.microsoft.com/us/en/search-jobs?s=1'
+    },
+    {
+      name: 'IBM',
+      logo: '💻',
+      type: 'Technology',
+      careers: 'https://www.ibm.com/careers/',
+      jobs: 'https://careers.ibm.com/ListJobs/All/'
+    },
+    {
+      name: 'TCS (Tata Consultancy)',
+      logo: '🏢',
+      type: 'IT Services',
+      careers: 'https://www.tcs.com/careers',
+      jobs: 'https://www.tcs.com/careers/search'
+    },
+    {
+      name: 'Infosys',
+      logo: '📱',
+      type: 'IT Services',
+      careers: 'https://www.infosys.com/careers/',
+      jobs: 'https://www.infosys.com/careers/job-search.html'
+    },
+    {
+      name: 'Accenture',
+      logo: '🎨',
+      type: 'IT Services',
+      careers: 'https://www.accenture.com/in-en/careers',
+      jobs: 'https://www.accenture.com/in-en/careers/jobsearch'
+    },
+    {
+      name: 'Capgemini',
+      logo: '🚀',
+      type: 'IT Services',
+      careers: 'https://www.capgemini.com/in-en/careers/',
+      jobs: 'https://www.capgemini.com/in-en/careers/job-search/'
+    },
+    {
+      name: 'ICICI Bank',
+      logo: '🏦',
+      type: 'Banking',
+      careers: 'https://www.icicibank.com/personal/careers/home.page',
+      jobs: 'https://www.icicibank.com/careers'
+    },
+    {
+      name: 'HDFC Bank',
+      logo: '💳',
+      type: 'Banking',
+      careers: 'https://www.hdfcbank.com/personal/careers/',
+      jobs: 'https://careers.hdfcbank.com/'
+    },
+    {
+      name: 'Unilever',
+      logo: '🌍',
+      type: 'FMCG',
+      careers: 'https://www.unilever.co.in/careers/',
+      jobs: 'https://www.unilever.co.in/careers/our-opportunities/'
+    },
+    {
+      name: 'P&G (Procter & Gamble)',
+      logo: '🧴',
+      type: 'FMCG',
+      careers: 'https://us.pg.com/careers/',
+      jobs: 'https://us.pg.com/careers/explore-opportunities/'
+    },
+    {
+      name: 'Nestle',
+      logo: '🍫',
+      type: 'FMCG',
+      careers: 'https://www.nestle.co.in/careers',
+      jobs: 'https://www.nestle.co.in/careers/job-openings'
+    },
+    {
+      name: 'Shell',
+      logo: '⚡',
+      type: 'Energy',
+      careers: 'https://www.shell.com/careers.html',
+      jobs: 'https://www.shell.com/careers/job-search.html'
+    },
+    {
+      name: 'Hindustan Unilever',
+      logo: '🏪',
+      type: 'FMCG',
+      careers: 'https://www.hul.co.in/careers',
+      jobs: 'https://www.hul.co.in/careers/join-us'
+    }
+  ];
+
+  function renderCompanies() {
+    const grid = document.getElementById('companiesGrid');
+    let html = '';
+    COMPANIES.forEach(company => {
+      html += `
+        <div class="company-card">
+          <div class="company-logo">${company.logo}</div>
+          <div class="company-name">${company.name}</div>
+          <div class="company-type">${company.type}</div>
+          <div class="company-links">
+            <a class="company-link" href="${company.jobs}" target="_blank" rel="noopener">View Jobs →</a>
+            <a class="company-link secondary" href="${company.careers}" target="_blank" rel="noopener">Careers Page</a>
+          </div>
+        </div>
+      `;
+    });
+    grid.innerHTML = html;
+  }
+
+  renderCompanies();
 
   // ────────────────────────────────────────────────────
   // NAVIGATION: Hamburger + Tabs
@@ -850,19 +1229,13 @@
     window.location.hash = tabId !== 'overview' ? '#' + tabId : '';
   }
   tabs.forEach(btn => btn.onclick = ()=> showTab(btn.dataset.tab));
-  // Hamburger menu for mobile
   document.getElementById('hamburgerBtn').onclick = ()=> {
     navTabs.classList.toggle('open');
   }
-  // Update visible section by URL hash
   if(location.hash) {
     const hashTab = location.hash.slice(1);
     if(document.getElementById(hashTab)) showTab(hashTab);
   }
-  // Resume Button
-  document.getElementById('resumeBtn').onclick = function() {
-    window.open('https://drive.google.com/file/d/1ibkRWFhp-2fXlFCOISZOePo6iTcC4Mot/view?usp=drive_link','_blank');
-  };
 
   // ATS SCORE CHECKER
   document.getElementById('atsCheckBtn').onclick = function() {
@@ -913,14 +1286,15 @@
       list.innerHTML = '<div class="empty-state">No applications yet. Add one above!</div>';
       return;
     }
-    let html = '<table class="apps-table"><thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+    let html = '<table class="apps-table"><thead><tr><th>Company</th><th>Role</th><th>Resume</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
     apps.forEach((app, idx) => {
       html += `<tr>
         <td>${app.company}</td>
         <td>${app.role}</td>
+        <td><span style="font-size:0.9em;background:#e3f0fd;padding:0.3em 0.6em;border-radius:4px;">${app.resume === 'general' ? '📄 General' : '💻 Technical'}</span></td>
         <td><span class="status-badge ${app.status}">${app.status.replace(/-/g, ' ')}</span></td>
         <td>${app.date || '-'}</td>
-        <td><button onclick="deleteApp(${idx})">Delete</button> <button onclick="editApp(${idx})">Edit</button></td>
+        <td style="font-size:0.9em;"><button onclick="deleteApp(${idx})" style="padding:0.3em 0.6em;margin-right:0.3em;">Delete</button> <button onclick="editApp(${idx})" style="padding:0.3em 0.6em;">Edit</button></td>
       </tr>`;
     });
     html += '</tbody></table>';
@@ -941,6 +1315,7 @@
     document.getElementById('appStatus').value = app.status;
     document.getElementById('appDate').value = app.date;
     document.getElementById('appLink').value = app.link || '';
+    document.getElementById('appResume').value = app.resume || 'general';
     document.getElementById('appNotes').value = app.notes || '';
     apps.splice(idx, 1);
     localStorage.setItem('internos_apps', JSON.stringify(apps));
@@ -956,6 +1331,7 @@
       status: document.getElementById('appStatus').value,
       date: document.getElementById('appDate').value,
       link: document.getElementById('appLink').value,
+      resume: document.getElementById('appResume').value,
       notes: document.getElementById('appNotes').value
     };
     apps.push(app);
@@ -995,11 +1371,12 @@
       list.innerHTML = '<div class="empty-state">No applications tracked yet.</div>';
       return;
     }
-    let html = '<table class="tracker-table"><thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Applied</th><th>Notes</th></tr></thead><tbody>';
+    let html = '<table class="tracker-table"><thead><tr><th>Company</th><th>Role</th><th>Resume Used</th><th>Status</th><th>Applied</th><th>Notes</th></tr></thead><tbody>';
     apps.forEach(app => {
       html += `<tr>
         <td>${app.company}</td>
         <td>${app.role}</td>
+        <td>${app.resume === 'general' ? '📄 General' : '💻 Technical'}</td>
         <td><span class="status-badge ${app.status}">${app.status.replace(/-/g, ' ')}</span></td>
         <td>${app.date || '-'}</td>
         <td>${app.notes || '-'}</td>
