@@ -376,40 +376,7 @@
     }
     .ai-close-btn:hover { color: var(--text); }
 
-    .ai-setup {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .ai-setup-label { font-size: 12px; color: var(--grey); font-weight: 500; }
-    .ai-setup-input {
-      width: 100%;
-      padding: 8px 11px;
-      font-size: 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: #f8fafc;
-      color: var(--text);
-    }
-    .ai-setup-input:focus { outline: none; border-color: var(--accent); }
-    .ai-setup-btn {
-      padding: 8px 12px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .ai-setup-btn:hover { background: var(--primary); }
-    .ai-setup-link { font-size: 11px; text-align: center; margin-top: 6px; }
-    .ai-setup-link a { color: var(--accent); text-decoration: none; }
-    .ai-setup-link a:hover { text-decoration: underline; }
-
-    .ai-chat { display: none; position: relative; width: 100%; height: 100%; }
-    .ai-chat.open { display: flex; flex-direction: column; }
+    .ai-chat { display: flex; position: relative; width: 100%; height: 100%; flex-direction: column; }
 
     .ai-messages { 
       flex: 1; 
@@ -744,15 +711,6 @@
       <button class="ai-close-btn" id="aiCloseBtn" aria-label="Close AI Assistant">✕</button>
     </div>
 
-    <div id="aiSetup" class="ai-setup">
-      <label class="ai-setup-label">Claude API Key</label>
-      <input type="password" class="ai-setup-input" id="apiKeyInput" placeholder="sk-ant-..." />
-      <button class="ai-setup-btn" onclick="saveAPIKey()">Save API Key</button>
-      <div class="ai-setup-link">
-        <a href="https://console.anthropic.com" target="_blank">Get API Key →</a>
-      </div>
-    </div>
-
     <div id="aiChat" class="ai-chat">
       <div class="ai-messages" id="aiMessages"></div>
       <div id="aiChips" class="ai-chips"></div>
@@ -764,22 +722,7 @@
   </div>
 
 <script>
-  // ── AI Assistant Configuration ──
-  const AI_SYSTEM_PROMPT = `You are InternOS Assistant, a career advisor specialized in internship hunting for Indian business school students (IIM, XLRI, FMS, etc.).
-
-You help with:
-- Finding internships on LinkedIn, Wellfound, Internshala, Unstop, Naukri, IIMJobs
-- Writing cold emails to recruiters
-- Improving resume bullets for specific roles
-- ATS keyword optimization for job descriptions
-- Interview prep (case studies, HR questions, guesstimates)
-- Deciding which roles to apply for based on the user's profile
-- Drafting follow-up messages after applying
-
-When suggesting job portals, always give the direct search URL. Be concise, actionable, and specific. Avoid vague advice.
-
-The user is an IPM student at IIM Bodh Gaya targeting Data Analyst, Business Analyst, Strategy, Consulting, and Research roles.`;
-
+  // ── Offline AI Assistant ──
   const STARTER_CHIPS = [
     "Find Data Analyst internships",
     "Write a cold email to a recruiter",
@@ -787,7 +730,18 @@ The user is an IPM student at IIM Bodh Gaya targeting Data Analyst, Business Ana
     "Prep me for a BA interview"
   ];
 
-  let aiApiKey = localStorage.getItem('internos_ai_key') || '';
+  const AI_RESPONSES = {
+    "find data analyst internships": "Here are the best platforms for Data Analyst internships:\n\n1. **LinkedIn Jobs**: Search 'Data Analyst Internship India' - Filter by internship, location, and experience level\n2. **Wellfound**: Great for startup data roles with modern tech stacks\n3. **Internshala**: Use advanced filters for Data Analyst roles\n4. **Naukri**: Indian companies often post here\n5. **Unstop**: Check competitions + internships section\n\nTip: Apply to 5-7 roles daily and customize your resume for each application.",
+    
+    "write a cold email to a recruiter": "Here's a template for a cold email:\n\n**Subject**: Data Analyst Intern at [Company] - IIM Student\n\nHi [Recruiter Name],\n\nI'm [Your Name], an IPM student at IIM Bodh Gaya interested in Data Analytics. I've worked on [mention a relevant project], and I'm excited about [company]'s work in [specific domain].\n\nI'd love to discuss how I can contribute to your team. My resume is attached.\n\nBest regards,\n[Your Name]\n\n**Tips**: Personalize it, keep it short (3-4 sentences), mention why them specifically, and follow up after 1 week.",
+    
+    "check my resume for ats": "Use the ATS Checker in the 'ATS Scores' tab to compare your resume against a job description. Here are optimization tips:\n\n✓ Include keywords from the JD (data analysis, Python, SQL, Tableau)\n✓ Use standard fonts (Arial, Calibri)\n✓ Avoid tables, graphics, and special characters\n✓ Include metrics in your bullets (e.g., 'Improved efficiency by 25%')\n✓ Match the job title format from the JD\n✓ Keep one-page for internships, 1.5 pages for experienced roles",
+    
+    "prep me for a ba interview": "Here's a quick prep framework:\n\n**Technical Round:**\n- Case study: Market sizing, profitability analysis\n- SQL/Data analysis: Simple queries, insights from data\n- Excel: Pivot tables, formulas, charts\n\n**HR Round:**\n- Why this company?\n- Biggest challenge you've faced\n- Why should we hire you?\n- What are your weaknesses?\n\n**Tips**: Practice 2-3 case studies, review past projects, prepare questions for them too.",
+    
+    "default": "I'm InternOS Assistant! I can help you with:\n• Finding internship opportunities\n• Writing cold emails to recruiters\n• Resume optimization and ATS checking\n• Interview preparation (cases, SQL, HR)\n• Career guidance\n\nJust ask me anything related to internships!"
+  };
+
   let aiMessages = JSON.parse(localStorage.getItem('internos_ai_messages') || '[]');
   let aiWaitingForResponse = false;
 
@@ -800,43 +754,35 @@ The user is an IPM student at IIM Bodh Gaya targeting Data Analyst, Business Ana
   }
 
   function initializeAIPanel() {
-    const setupDiv = document.getElementById('aiSetup');
-    const chatDiv = document.getElementById('aiChat');
     const messagesDiv = document.getElementById('aiMessages');
     const chipsDiv = document.getElementById('aiChips');
 
-    if (aiApiKey) {
-      setupDiv.style.display = 'none';
-      chatDiv.classList.add('open');
-      renderAIMessages();
-      if (aiMessages.length === 0) {
-        chipsDiv.innerHTML = STARTER_CHIPS.map(chip => 
-          `<button class="ai-chip" onclick="sendAIChip('${chip}')">${chip}</button>`
-        ).join('');
-      } else {
-        chipsDiv.innerHTML = '';
-      }
+    if (aiMessages.length === 0) {
+      chipsDiv.innerHTML = STARTER_CHIPS.map(chip => 
+        `<button class="ai-chip" onclick="sendAIChip('${chip}')">${chip}</button>`
+      ).join('');
     } else {
-      setupDiv.style.display = 'flex';
-      chatDiv.classList.remove('open');
+      renderAIMessages();
+      chipsDiv.innerHTML = '';
     }
-  }
-
-  function saveAPIKey() {
-    const key = document.getElementById('apiKeyInput').value.trim();
-    if (!key) {
-      alert('Please enter your Claude API key');
-      return;
-    }
-    aiApiKey = key;
-    localStorage.setItem('internos_ai_key', key);
-    initializeAIPanel();
   }
 
   function sendAIChip(text) {
     const input = document.getElementById('aiInput');
     input.value = text;
     sendAIMessage();
+  }
+
+  function getAIResponse(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    for (let key in AI_RESPONSES) {
+      if (lowerMessage.includes(key)) {
+        return AI_RESPONSES[key];
+      }
+    }
+    
+    return AI_RESPONSES["default"];
   }
 
   function sendAIMessage() {
@@ -862,63 +808,21 @@ The user is an IPM student at IIM Bodh Gaya targeting Data Analyst, Business Ana
     `;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    callClaudeAPI(message);
-  }
-
-  function callClaudeAPI(userMessage) {
-    const apiUrl = 'https://api.anthropic.com/v1/messages';
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': aiApiKey,
-      'anthropic-version': '2023-06-01'
-    };
-
-    const requestBody = {
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      system: AI_SYSTEM_PROMPT,
-      messages: aiMessages.map(m => ({ role: m.role, content: m.content }))
-    };
-
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(requestBody)
-    })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`API Error: ${res.status}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      const botMessage = data.content[0].text;
-      aiMessages.push({ role: 'assistant', content: botMessage });
+    // Simulate response delay
+    setTimeout(() => {
+      const response = getAIResponse(message);
+      aiMessages.push({ role: 'assistant', content: response });
       localStorage.setItem('internos_ai_messages', JSON.stringify(aiMessages));
       renderAIMessages();
       aiWaitingForResponse = false;
-    })
-    .catch(err => {
-      const messagesDiv = document.getElementById('aiMessages');
-      messagesDiv.innerHTML = messagesDiv.innerHTML.replace(
-        /<div class="ai-message bot">[\s\S]*?<\/div>$/,
-        ''
-      );
-      aiMessages.push({ 
-        role: 'assistant', 
-        content: `⚠️ Error: ${err.message}. Please check your API key.` 
-      });
-      localStorage.setItem('internos_ai_messages', JSON.stringify(aiMessages));
-      renderAIMessages();
-      aiWaitingForResponse = false;
-    });
+    }, 800);
   }
 
   function renderAIMessages() {
     const messagesDiv = document.getElementById('aiMessages');
     messagesDiv.innerHTML = aiMessages.map(msg => `
       <div class="ai-message ${msg.role}">
-        <div class="ai-msg-bubble">${msg.content}</div>
+        <div class="ai-msg-bubble">${msg.content.replace(/\n/g, '<br>')}</div>
       </div>
     `).join('');
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -998,194 +902,134 @@ The user is an IPM student at IIM Bodh Gaya targeting Data Analyst, Business Ana
   };
 
   // APPLICATION DATA (localStorage)
-  const APPS_KEY = "internos_apps";
-  function loadApplications() {
-    try { return JSON.parse(localStorage.getItem(APPS_KEY)||"[]"); }
-    catch { return []; }
-  }
-  function saveApplications(list) {
-    localStorage.setItem(APPS_KEY, JSON.stringify(list));
-  }
+  const apps = JSON.parse(localStorage.getItem('internos_apps') || '[]');
+  const tracker = JSON.parse(localStorage.getItem('internos_tracker') || '{}');
+  const weekly = JSON.parse(localStorage.getItem('internos_weekly') || '{}');
+
+  // Render Applications
   function renderApplications() {
-    const apps = loadApplications();
-    const el = document.getElementById('applicationsList');
-    if (apps.length === 0) {
-      el.innerHTML = `<div class="empty-state">No applications yet. Add your first one.</div>`;
-    } else {
-      el.innerHTML = `<table class="apps-table">
-      <tr>
-        <th>#</th>
-        <th>Company</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Date</th>
-        <th>Link</th>
-        <th>Notes</th>
-        <th></th>
-      </tr>` + apps.map((app, i) => `
-      <tr>
-        <td>${i+1}</td>
+    const list = document.getElementById('applicationsList');
+    if(apps.length === 0) {
+      list.innerHTML = '<div class="empty-state">No applications yet. Add one above!</div>';
+      return;
+    }
+    let html = '<table class="apps-table"><thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+    apps.forEach((app, idx) => {
+      html += `<tr>
         <td>${app.company}</td>
         <td>${app.role}</td>
-        <td><span class="status-badge ${app.status}">${statusName(app.status)}</span></td>
-        <td>${app.date||'-'}</td>
-        <td>${app.link ? `<a href="${app.link}" target="_blank" rel="noopener">View</a>` : ''}</td>
-        <td>${app.notes ? app.notes : ''}</td>
-        <td><button onclick="deleteApplication(${i})" title="Delete">&#x2715;</button></td>
-      </tr>
-      `).join("")+"</table>";
+        <td><span class="status-badge ${app.status}">${app.status.replace(/-/g, ' ')}</span></td>
+        <td>${app.date || '-'}</td>
+        <td><button onclick="deleteApp(${idx})">Delete</button> <button onclick="editApp(${idx})">Edit</button></td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    list.innerHTML = html;
+  }
+  function deleteApp(idx) {
+    if(confirm('Delete this application?')) {
+      apps.splice(idx, 1);
+      localStorage.setItem('internos_apps', JSON.stringify(apps));
+      renderApplications();
+      renderDashboard();
     }
+  }
+  function editApp(idx) {
+    const app = apps[idx];
+    document.getElementById('appCompany').value = app.company;
+    document.getElementById('appRole').value = app.role;
+    document.getElementById('appStatus').value = app.status;
+    document.getElementById('appDate').value = app.date;
+    document.getElementById('appLink').value = app.link || '';
+    document.getElementById('appNotes').value = app.notes || '';
+    apps.splice(idx, 1);
+    localStorage.setItem('internos_apps', JSON.stringify(apps));
+    renderApplications();
     renderDashboard();
-    renderTracker();
+    document.getElementById('appCompany').focus();
   }
-  function statusName(status) {
-    return {
-      "to-apply":"To Apply",
-      "applied":"Applied",
-      "oa-pending":"OA Pending",
-      "interview":"Interview",
-      "rejected":"Rejected",
-      "selected":"Selected"
-    }[status] || status;
-  }
-  // Form: Add Application
   document.getElementById('addAppForm').onsubmit = function(e) {
     e.preventDefault();
-    const company = document.getElementById('appCompany').value.trim();
-    const role    = document.getElementById('appRole').value.trim();
-    const status  = document.getElementById('appStatus').value;
-    const date    = document.getElementById('appDate').value || "";
-    const link    = document.getElementById('appLink').value.trim();
-    const notes   = document.getElementById('appNotes').value.trim();
-    if (!company || !role || !status) return;
-    const apps = loadApplications();
-    apps.unshift({company,role,status,date,link,notes});
-    saveApplications(apps);
+    const app = {
+      company: document.getElementById('appCompany').value,
+      role: document.getElementById('appRole').value,
+      status: document.getElementById('appStatus').value,
+      date: document.getElementById('appDate').value,
+      link: document.getElementById('appLink').value,
+      notes: document.getElementById('appNotes').value
+    };
+    apps.push(app);
+    localStorage.setItem('internos_apps', JSON.stringify(apps));
     this.reset();
     renderApplications();
+    renderDashboard();
+    renderTracker();
   };
-  // Delete Application
-  window.deleteApplication = function(idx){
-    if(!confirm("Delete this application?"))return;
-    const apps = loadApplications();
-    apps.splice(idx,1);
-    saveApplications(apps);
-    renderApplications();
-  }
-  // DASHBOARD: List latest applications with empty state
-  function renderDashboard() {
-    const apps = loadApplications();
-    const dash = document.getElementById('dashboardApps');
-    if (apps.length === 0) {
-      dash.innerHTML = `<div class="empty-state">No applications yet. Add your first one.</div>`;
-      return;
-    }
-    const summary = {
-      "to-apply":0,
-      "applied":0,
-      "oa-pending":0,
-      "interview":0,
-      "rejected":0,
-      "selected":0
-    };
-    apps.forEach(a=>{ if(summary[a.status]!==undefined)summary[a.status]++; });
-    dash.innerHTML = `
-      <div style="display:flex;flex-wrap:wrap;gap:1.6em 2.5em;align-items:center;margin-bottom:1.4em;">
-         ${Object.entries(summary).map(([k,v]) =>
-          `<span class="status-badge ${k}" style="font-size:1.18em;">${statusName(k)}: ${v}</span>`).join("")
-         }
-      </div>
-      <h3 style="font-size:1.07em;margin-top:0;">Latest Applications</h3>
-      <table class="apps-table"><tr>
-        <th>Company</th><th>Role</th><th>Status</th>
-        <th>Date</th><th>Link</th>
-      </tr>
-      ${
-        apps.slice(0,5).map(a=>`
-        <tr>
-          <td>${a.company}</td>
-          <td>${a.role}</td>
-          <td><span class="status-badge ${a.status}">${statusName(a.status)}</span></td>
-          <td>${a.date||"-"}</td>
-          <td>${a.link?`<a href="${a.link}" target="_blank" rel="noopener">View</a>`:""}</td>
-        </tr>`).join("")
-      }
-      </table>
-      <div style="color:var(--grey);font-size:.96em;">(See full list in Applications tab)</div>
-    `;
-  }
-  // TRACKER: List all applications with color-coded status, date, link
-  function renderTracker(){
-    const apps = loadApplications();
-    const tracker = document.getElementById('trackerList');
-    if (apps.length===0){
-      tracker.innerHTML = `<div class="empty-state">No applications yet. Add your first one.</div>`;
-      return;
-    }
-    tracker.innerHTML = `<table class="tracker-table"><tr>
-      <th>Company</th><th>Role</th><th>Status</th>
-      <th>Date</th><th>Link</th>
-    </tr>${
-      apps.map(a=>`
-        <tr>
-          <td>${a.company}</td>
-          <td>${a.role}</td>
-          <td><span class="status-badge ${a.status}">${statusName(a.status)}</span></td>
-          <td>${a.date||'-'}</td>
-          <td>${a.link?`<a href="${a.link}" target="_blank" rel="noopener">View</a>`:""}</td>
-        </tr>`).join("")
-    }</table>`;
-  }
   renderApplications();
 
-  // WEEKLY PLAN — seven columns editable, persistent in localStorage
-  const WEEK_KEY = "internos_weekplan";
-  function renderWeeklyPlan(){
-    const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-    const week = JSON.parse(localStorage.getItem(WEEK_KEY) || "[]");
-    const plan = document.getElementById('weeklyPlan');
-    plan.innerHTML = days.map((d,i)=>`
-      <div class="day-card">
-        <h4>${d}</h4>
-        <textarea class="day-input" id="day${i}" rows="5" placeholder="Enter task(s)">${week[i]||""}</textarea>
-      </div>
-    `).join('');
-    plan.querySelectorAll('textarea').forEach((txt,i)=>{
-      txt.oninput = function(){
-        let val = this.value;
-        let copy = Array.from(document.querySelectorAll('.day-input')).map(t=>t.value);
-        localStorage.setItem(WEEK_KEY, JSON.stringify(copy));
-      }
-    });
-  }
-  renderWeeklyPlan();
-
-  // On page show: reload data if storage changes
-  window.addEventListener('storage', function(e){
-    if(e.key===APPS_KEY) renderApplications();
-    if(e.key===WEEK_KEY) renderWeeklyPlan();
-  });
-  // Fix: update weekly planner and dashboard instantly on tab click
-  tabs.forEach(btn=>btn.addEventListener('click',()=>{
-    if(btn.dataset.tab==="weekly") renderWeeklyPlan();
-    if(btn.dataset.tab==="dashboard") renderDashboard();
-  }));
-
-  // Accessibility: skip-link target
-  document.querySelector('.skip-link').onclick = ()=>{
-    document.getElementById('main-content').tabIndex = -1;
-    document.getElementById('main-content').focus();
-  };
-
-  // (Optional) Favicon fallback if missing
-  (function ensureFavicon(){
-    var links = document.querySelectorAll('link[rel="icon"]');
-    if(!links.length){
-      var l=document.createElement('link');
-      l.rel="icon"; l.type="image/png"; l.href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAEklEQVR4AWMgFvAQmBgAAAB0AAWJcczNAAAAAElFTkSuQmCC";
-      document.head.appendChild(l);
+  // Render Dashboard
+  function renderDashboard() {
+    const dash = document.getElementById('dashboardApps');
+    if(apps.length === 0) {
+      dash.innerHTML = '<div class="empty-state">Start by adding an application to track your progress!</div>';
+      return;
     }
-  })();
+    const statuses = {};
+    apps.forEach(app => {
+      statuses[app.status] = (statuses[app.status] || 0) + 1;
+    });
+    let html = '<div class="card-grid">';
+    for(let status in statuses) {
+      const label = status.replace(/-/g, ' ').toUpperCase();
+      html += `<div class="card"><div class="card-title">${label}</div><div class="card-desc" style="font-size:1.5em;font-weight:600;">${statuses[status]}</div></div>`;
+    }
+    html += '</div>';
+    dash.innerHTML = html;
+  }
+  renderDashboard();
+
+  // Render Tracker
+  function renderTracker() {
+    const list = document.getElementById('trackerList');
+    if(apps.length === 0) {
+      list.innerHTML = '<div class="empty-state">No applications tracked yet.</div>';
+      return;
+    }
+    let html = '<table class="tracker-table"><thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Applied</th><th>Notes</th></tr></thead><tbody>';
+    apps.forEach(app => {
+      html += `<tr>
+        <td>${app.company}</td>
+        <td>${app.role}</td>
+        <td><span class="status-badge ${app.status}">${app.status.replace(/-/g, ' ')}</span></td>
+        <td>${app.date || '-'}</td>
+        <td>${app.notes || '-'}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    list.innerHTML = html;
+  }
+  renderTracker();
+
+  // Weekly Planner
+  function renderWeekly() {
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const weeklyDiv = document.getElementById('weeklyPlan');
+    let html = '';
+    days.forEach(day => {
+      const key = day.toLowerCase();
+      const value = weekly[key] || '';
+      html += `<div class="day-card">
+        <h4>${day}</h4>
+        <textarea class="day-input" placeholder="Add your plan..." onchange="updateWeekly('${key}', this.value)">${value}</textarea>
+      </div>`;
+    });
+    weeklyDiv.innerHTML = html;
+  }
+  function updateWeekly(day, value) {
+    weekly[day] = value;
+    localStorage.setItem('internos_weekly', JSON.stringify(weekly));
+  }
+  renderWeekly();
 </script>
 </body>
 </html>
