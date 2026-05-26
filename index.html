@@ -9,6 +9,28 @@
   <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
   <style>
     :root {
+      /* Dark Porsche Theme (Default) */
+      --primary: #1a1a1a;
+      --accent: #d4af37;
+      --bg: #0a0a0a;
+      --text: #ededed;
+      --card: #141414;
+      --border: #2a2a2a;
+      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+      --radius: 10px;
+      --danger: #ff6b6b;
+      --success: #51cf66;
+      --warning: #ffd43b;
+      --grey: #9ca3af;
+      --blue: #60a5fa;
+      --orange: #fb923c;
+      --selected: #51cf66;
+      --mobile-nav-height: 56px;
+    }
+
+    /* Light Theme (Optional) */
+    html.light-mode {
       --primary: #204080;
       --accent: #2962ff;
       --bg: #f6f7fb;
@@ -16,7 +38,7 @@
       --card: #fff;
       --border: #e0e3ee;
       --shadow: 0 2px 8px rgba(32,64,128,0.07);
-      --radius: 10px;
+      --shadow-sm: 0 2px 8px rgba(32,64,128,0.07);
       --danger: #e53935;
       --success: #43a047;
       --warning: #fbc02d;
@@ -24,59 +46,103 @@
       --blue: #1976d2;
       --orange: #f57c00;
       --selected: #2ecc40;
-      --mobile-nav-height: 56px;
     }
+
     html, body {
-      margin:0;
-      padding:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:'Inter', Arial, sans-serif;
-      font-size:16px;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 16px;
+      transition: background-color 0.3s, color 0.3s;
     }
+
     body {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      background-attachment: fixed;
     }
+
+    /* Hero Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(rgba(10,10,10,0.9), rgba(10,10,10,0.95)), 
+                  url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=2400&auto=format&fit=crop') 
+                  center/cover fixed no-repeat;
+      z-index: -2;
+    }
+
+    /* Porsche SVG Watermark */
+    body::after {
+      content: '🏎️';
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 120px;
+      opacity: 0.03;
+      z-index: -1;
+      pointer-events: none;
+    }
+
     header {
-      background: var(--primary);
+      background: rgba(20, 20, 20, 0.8);
       color: #fff;
       padding: 0;
       position: sticky;
       top: 0;
       z-index: 11;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
     }
+
     .navbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 1.2em;
       min-height: 56px;
+      flex-wrap: wrap;
     }
+
     .logo {
       font-weight: 700;
       font-size: 1.25em;
       letter-spacing: 2px;
-      color: #fff;
+      color: var(--accent);
       text-decoration: none;
       margin-right: 10px;
+      background: linear-gradient(135deg, var(--accent), #c0a04d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
+
     nav {
       flex: 1;
       margin-left: 1em;
     }
+
     .nav-tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: .5em;
+      gap: 0.5em;
       list-style: none;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
     }
+
     .nav-tabs li {
       margin: 0;
     }
+
     .nav-tabs button {
       background: transparent;
       border: none;
@@ -85,24 +151,55 @@
       padding: 0.4em 0.7em;
       border-radius: var(--radius);
       cursor: pointer;
-      transition: background .2s;
+      transition: background 0.2s, color 0.2s;
     }
-    .nav-tabs button.active, .nav-tabs button:hover {
+
+    .nav-tabs button.active,
+    .nav-tabs button:hover {
       background: var(--accent);
+      color: #000;
     }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 0.4em 0.8em;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
     .resume-btn {
-      margin-left: 1em;
-      background: #fff;
-      color: var(--primary);
+      background: var(--accent);
+      color: #000;
       border: none;
       font-weight: 600;
       border-radius: var(--radius);
       padding: 0.45em 1.25em;
       cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: background .2s, color .2s;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
     }
-    .resume-btn:hover { background: var(--accent); color: #fff; }
+
+    .resume-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+
     .hamburger {
       display: none;
       flex-direction: column;
@@ -110,212 +207,540 @@
       margin-left: 10px;
       padding: 8px;
     }
+
     .hamburger div {
       background: #fff;
       height: 3px;
       width: 24px;
       margin: 3px 0;
       border-radius: 2px;
+      transition: all 0.3s;
     }
+
     main {
-      flex:1;
-      width:100%;
+      flex: 1;
+      width: 100%;
       max-width: 1200px;
       margin: 35px auto 0 auto;
       padding: 1em;
       min-height: 400px;
     }
+
     section {
       display: none;
     }
+
     section.active {
       display: block;
     }
+
     h2 {
       margin-top: 0;
-      font-size: 1.4em;
-      font-weight:600;
-      color: var(--primary);
-      margin-bottom:0.5em;
+      font-size: 1.8em;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.8em;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
+
+    h3 {
+      color: var(--accent);
+      margin-top: 1.5em;
+      margin-bottom: 0.8em;
+      font-size: 1.2em;
+    }
+
+    p {
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    /* Card Grid */
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1em;
+      gap: 1.2em;
       margin-bottom: 1em;
     }
+
     .card {
-      background: var(--card);
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(10px);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 1em;
+      box-shadow: var(--shadow-sm);
+      padding: 1.5em;
       border: 1px solid var(--border);
-      display:flex;
-      flex-direction:column;
+      display: flex;
+      flex-direction: column;
       align-items: flex-start;
-      transition: box-shadow .2s;
+      transition: all 0.3s;
     }
+
     .card:hover {
-      box-shadow: 0 4px 24px rgba(41,98,255,.15);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(212, 175, 55, 0.15);
+      border-color: var(--accent);
     }
+
     .card-title {
       font-weight: 600;
       font-size: 1.1em;
       margin-bottom: 0.4em;
+      color: var(--accent);
     }
+
     .card-desc {
       color: var(--grey);
       font-size: 0.97em;
-      margin-bottom: .6em;
+      margin-bottom: 0.6em;
     }
+
     .card-link {
       margin-top: auto;
       background: var(--accent);
-      color: #fff;
+      color: #000;
       text-decoration: none;
       font-weight: 600;
-      padding: 0.35em 1em;
+      padding: 0.5em 1em;
       border-radius: var(--radius);
       font-size: 0.97em;
-      display:inline-block;
-      transition: background .2s;
+      display: inline-block;
+      transition: all 0.2s;
+      border: 2px solid var(--accent);
     }
-    .card-link:hover { background: var(--primary); }
+
+    .card-link:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    /* Status Badges */
     .status-badge {
-      display:inline-block;
-      min-width:80px;
-      text-align:center;
-      padding:2px 14px;
-      font-size:0.97em;
-      font-weight:600;
-      border-radius:12px;
-      margin-right:3px;
-      border:1px solid #d5d5d5;
-      margin-bottom:2px;
+      display: inline-block;
+      min-width: 80px;
+      text-align: center;
+      padding: 4px 12px;
+      font-size: 0.85em;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-right: 3px;
+      border: 1px solid;
+      margin-bottom: 2px;
     }
-    .to-apply     { background: #f6f7fb; color: var(--grey);}
-    .applied      { background: #e3f0fd; color: var(--blue);}
-    .oa-pending   { background: #fff7e0; color: var(--warning);}
-    .interview    { background: #ffe4ce; color: var(--orange);}
-    .rejected     { background: #ffe0e1; color: var(--danger);}
-    .selected     { background: #def7e2; color: var(--success);}
-    .tracker-table,.apps-table {
+
+    .to-apply {
+      background: rgba(155, 155, 155, 0.2);
+      color: var(--grey);
+      border-color: var(--grey);
+    }
+
+    .applied {
+      background: rgba(96, 165, 250, 0.2);
+      color: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .oa-pending {
+      background: rgba(255, 211, 59, 0.2);
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+
+    .interview {
+      background: rgba(251, 146, 60, 0.2);
+      color: var(--orange);
+      border-color: var(--orange);
+    }
+
+    .rejected {
+      background: rgba(255, 107, 107, 0.2);
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .selected {
+      background: rgba(81, 207, 102, 0.2);
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    /* Tables */
+    .tracker-table,
+    .apps-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom:1em;
+      margin-bottom: 1em;
     }
-    .tracker-table th, .tracker-table td,
-    .apps-table th, .apps-table td {
-      padding: 7px 8px;
+
+    .tracker-table th,
+    .tracker-table td,
+    .apps-table th,
+    .apps-table td {
+      padding: 12px;
       border-bottom: 1px solid var(--border);
       text-align: left;
-      font-size:0.98em;
+      font-size: 0.98em;
     }
-    .apps-table th, .tracker-table th {
-      background: #f2f4fa;
-      text-align:left;
+
+    .apps-table th,
+    .tracker-table th {
+      background: rgba(20, 20, 20, 0.4);
+      color: var(--accent);
+      font-weight: 600;
     }
-    input, textarea, select, button {
+
+    .apps-table td,
+    .tracker-table td {
+      background: rgba(20, 20, 20, 0.2);
+    }
+
+    /* Form Elements */
+    input,
+    textarea,
+    select,
+    button {
       font-family: inherit;
       font-size: inherit;
     }
-    input[type="text"],input[type="date"],textarea,select {
+
+    input[type="text"],
+    input[type="date"],
+    input[type="url"],
+    textarea,
+    select {
       width: 100%;
-      padding: 0.45em;
-      margin-bottom: .9em;
+      padding: 0.7em;
+      margin-bottom: 0.9em;
       border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: #f8fafc;
-      transition: border .2s;
+      border: 1px solid var(--border);
+      background: rgba(20, 20, 20, 0.5);
+      color: var(--text);
+      transition: all 0.2s;
       box-sizing: border-box;
     }
-    input:focus, textarea:focus, select:focus {
+
+    input:focus,
+    textarea:focus,
+    select:focus {
       border-color: var(--accent);
       outline: none;
+      background: rgba(20, 20, 20, 0.8);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
     }
-    textarea { min-height: 48px; }
-    button, input[type="button"] {
-      background: var(--primary);
-      color: #fff;
-      border: none;
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button,
+    input[type="button"] {
+      background: var(--accent);
+      color: #000;
+      border: 2px solid var(--accent);
       border-radius: var(--radius);
-      padding: 0.5em 1.1em;
+      padding: 0.6em 1.2em;
       font-weight: 600;
       cursor: pointer;
       margin-top: 2px;
       margin-bottom: 7px;
-      box-shadow: var(--shadow);
-      transition: background .2s;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
     }
-    button:hover, input[type="button"]:hover {
-      background: var(--accent);
+
+    button:hover,
+    input[type="button"]:hover {
+      background: transparent;
+      color: var(--accent);
+      transform: translateY(-2px);
     }
-    /* ATS score styles */
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ATS Section */
     .ats-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.2em;
-      margin-bottom:.7em;
-      align-items:start;
+      gap: 1.5em;
+      margin-bottom: 1.5em;
+      align-items: start;
     }
+
     .ats-column {
       display: flex;
       flex-direction: column;
-      gap: .3em;
+      gap: 0.5em;
     }
-    .ats-label { font-weight: 500; margin-bottom: 3px;}
-    #ats-result {
-      background: #f8fafc;
+
+    .ats-label {
+      font-weight: 600;
+      margin-bottom: 0.5em;
+      color: var(--accent);
+    }
+
+    .ats-result-section {
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(10px);
       border-radius: var(--radius);
       border: 1px solid var(--border);
-      padding: .72em 1em;
-      margin-top: .85em;
-      font-size:1.07em;
-      font-weight: 600;
+      padding: 2em;
+      margin-top: 2em;
+    }
+
+    .ats-score-container {
+      display: flex;
+      align-items: center;
+      gap: 1.5em;
+      margin-bottom: 2em;
+    }
+
+    .ats-score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: 700;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .ats-score-circle.excellent {
+      background: rgba(81, 207, 102, 0.2);
+      border: 3px solid var(--success);
+      color: var(--success);
+    }
+
+    .ats-score-circle.good {
+      background: rgba(255, 211, 59, 0.2);
+      border: 3px solid var(--warning);
+      color: var(--warning);
+    }
+
+    .ats-score-circle.poor {
+      background: rgba(255, 107, 107, 0.2);
+      border: 3px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .ats-score-details h3 {
+      margin-top: 0;
+    }
+
+    .ats-score-details p {
+      margin: 0.5em 0;
+      font-size: 0.95em;
+    }
+
+    .ats-section {
+      margin-bottom: 2em;
+    }
+
+    .ats-section h4 {
       color: var(--accent);
+      margin-bottom: 1em;
+      font-size: 1.1em;
+    }
+
+    .keyword-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6em;
+      margin-bottom: 1em;
+    }
+
+    .keyword-tag {
+      padding: 0.5em 1em;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 500;
+      border: 1px solid;
+      backdrop-filter: blur(5px);
+    }
+
+    .keyword-tag.matched {
+      background: rgba(81, 207, 102, 0.15);
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .keyword-tag.missing {
+      background: rgba(255, 107, 107, 0.15);
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .ats-suggestion {
+      background: rgba(20, 20, 20, 0.4);
+      border-left: 3px solid var(--accent);
+      padding: 1em;
+      margin-bottom: 0.8em;
+      border-radius: 4px;
+    }
+
+    /* Company Search */
+    .company-search-container {
+      margin-bottom: 2em;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .companies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5em;
+      margin-bottom: 1em;
+    }
+
+    .company-card {
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 1.5em;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .company-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(212, 175, 55, 0.15);
+      border-color: var(--accent);
+    }
+
+    .company-logo {
+      font-size: 2.5em;
+      margin-bottom: 0.8em;
+    }
+
+    .company-name {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin-bottom: 0.4em;
+      color: var(--accent);
+    }
+
+    .company-type {
+      font-size: 0.85em;
+      color: var(--grey);
+      margin-bottom: 1em;
+      background: rgba(212, 175, 55, 0.1);
+      padding: 0.4em 0.8em;
+      border-radius: 6px;
       display: inline-block;
     }
-    /* Weekly planner */
-    .weekly-plan {
-      display: grid;
-      grid-template-columns: repeat(7,1fr);
-      gap: 1em;
-    }
-    .day-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      padding: .6em;
-      min-width:0;
+
+    .company-links {
       display: flex;
-      flex-direction:column;
+      flex-direction: column;
+      gap: 0.6em;
     }
-    .day-card h4 {
-      margin:0 0 .4em 0;
-      font-size:1em;
-      font-weight:600;
+
+    .company-link {
+      background: var(--accent);
+      color: #000;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.6em 1em;
+      border-radius: var(--radius);
+      font-size: 0.9em;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.2s;
+      border: 2px solid var(--accent);
+    }
+
+    .company-link:hover {
+      background: transparent;
       color: var(--accent);
     }
-    .day-input {
-      resize: vertical;
-      border-radius: var(--radius);
-      border:1px solid var(--border);
+
+    .company-link.secondary {
+      background: transparent;
+      color: var(--accent);
     }
-    /* Empty state */
+
+    .company-link.secondary:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Empty State */
     .empty-state {
       text-align: center;
       color: var(--grey);
-      font-size: 1.13em;
-      background: #f8fafc;
+      font-size: 1.1em;
+      background: rgba(20, 20, 20, 0.6);
       border-radius: var(--radius);
-      padding: 2.5em 1em;
-      box-shadow: var(--shadow);
-      margin:2em auto 1em auto;
-      max-width:400px;
+      padding: 3em 1em;
+      box-shadow: var(--shadow-sm);
+      margin: 2em auto;
+      max-width: 500px;
+      border: 1px dashed var(--border);
     }
 
-    /* ── AI Assistant ── */
+    .empty-state-icon {
+      font-size: 3em;
+      margin-bottom: 1em;
+    }
+
+    /* Loading Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.1));
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .skeleton-card {
+      height: 250px;
+      border-radius: var(--radius);
+      margin-bottom: 1em;
+    }
+
+    /* Weekly Planner */
+    .weekly-plan {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1em;
+    }
+
+    .day-card {
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      padding: 1em;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .day-card h4 {
+      margin: 0 0 0.6em 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .day-input {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* AI Assistant */
     .ai-btn {
       position: fixed;
       bottom: 24px;
@@ -323,8 +748,8 @@
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background: var(--primary);
-      color: #fff;
+      background: var(--accent);
+      color: #000;
       border: none;
       cursor: pointer;
       font-size: 24px;
@@ -332,10 +757,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.3s;
       z-index: 150;
+      font-weight: 600;
     }
-    .ai-btn:hover { background: var(--accent); transform: scale(1.1); }
+
+    .ai-btn:hover {
+      transform: scale(1.15);
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+    }
 
     .ai-panel {
       position: fixed;
@@ -343,20 +773,30 @@
       right: 24px;
       width: 380px;
       height: 500px;
-      background: var(--card);
+      background: rgba(20, 20, 20, 0.95);
       border-radius: var(--radius);
       border: 1px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      box-shadow: var(--shadow);
       display: none;
       flex-direction: column;
       z-index: 200;
       animation: slideUp 0.3s ease;
+      backdrop-filter: blur(10px);
     }
-    .ai-panel.open { display: flex; }
+
+    .ai-panel.open {
+      display: flex;
+    }
 
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .ai-header {
@@ -366,26 +806,43 @@
       justify-content: space-between;
       align-items: center;
     }
-    .ai-title { font-size: 13px; font-weight: 600; }
+
+    .ai-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
     .ai-close-btn {
       background: none;
       border: none;
       cursor: pointer;
       color: var(--grey);
       font-size: 18px;
+      transition: color 0.2s;
     }
-    .ai-close-btn:hover { color: var(--text); }
 
-    .ai-chat { display: flex; position: relative; width: 100%; height: 100%; flex-direction: column; }
+    .ai-close-btn:hover {
+      color: var(--accent);
+    }
 
-    .ai-messages { 
-      flex: 1; 
-      overflow-y: auto; 
-      padding: 12px; 
-      display: flex; 
-      flex-direction: column; 
+    .ai-chat {
+      display: flex;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+    }
+
+    .ai-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
       gap: 10px;
     }
+
     .ai-message {
       display: flex;
       gap: 8px;
@@ -393,33 +850,73 @@
       line-height: 1.5;
       animation: fadeIn 0.3s ease;
     }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .ai-message.user { justify-content: flex-end; }
-    .ai-message.bot { justify-content: flex-start; }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .ai-message.user {
+      justify-content: flex-end;
+    }
+
+    .ai-message.bot {
+      justify-content: flex-start;
+    }
+
     .ai-msg-bubble {
       padding: 8px 12px;
       border-radius: 8px;
       max-width: 75%;
       word-wrap: break-word;
     }
-    .ai-message.user .ai-msg-bubble { background: var(--accent); color: #fff; }
-    .ai-message.bot .ai-msg-bubble { background: #f0f0f0; color: var(--text); }
+
+    .ai-message.user .ai-msg-bubble {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .ai-message.bot .ai-msg-bubble {
+      background: rgba(40, 40, 40, 0.8);
+      color: var(--text);
+    }
 
     .ai-typing {
       display: flex;
       gap: 4px;
       padding: 8px 12px;
     }
-    .ai-dot { 
-      width: 6px; 
-      height: 6px; 
-      border-radius: 50%; 
-      background: var(--grey); 
+
+    .ai-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
       animation: bounce 1.4s infinite;
     }
-    .ai-dot:nth-child(2) { animation-delay: 0.2s; }
-    .ai-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce { 0%, 80%, 100% { opacity: 0.4; } 40% { opacity: 1; } }
+
+    .ai-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .ai-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      0%,
+      80%,
+      100% {
+        opacity: 0.4;
+      }
+      40% {
+        opacity: 1;
+      }
+    }
 
     .ai-chips {
       padding: 0 12px 10px;
@@ -427,17 +924,22 @@
       flex-wrap: wrap;
       gap: 6px;
     }
+
     .ai-chip {
       padding: 6px 10px;
-      background: #f0f0f0;
-      color: var(--text);
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--accent);
       border: 1px solid var(--border);
       border-radius: 100px;
       cursor: pointer;
       font-size: 11px;
-      transition: all 0.1s;
+      transition: all 0.2s;
     }
-    .ai-chip:hover { background: var(--accent); color: #fff; }
+
+    .ai-chip:hover {
+      background: var(--accent);
+      color: #000;
+    }
 
     .ai-input-box {
       padding: 12px;
@@ -445,30 +947,45 @@
       display: flex;
       gap: 8px;
     }
+
     .ai-input-field {
       flex: 1;
       padding: 8px 11px;
       font-size: 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: #f8fafc;
+      background: rgba(20, 20, 20, 0.5);
       color: var(--text);
     }
-    .ai-input-field:focus { outline: none; border-color: var(--accent); }
+
+    .ai-input-field:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(20, 20, 20, 0.8);
+    }
+
     .ai-send-btn {
       padding: 8px 12px;
       background: var(--accent);
-      color: #fff;
+      color: #000;
       border: none;
       border-radius: var(--radius);
       cursor: pointer;
       font-size: 12px;
       font-weight: 600;
+      transition: all 0.2s;
     }
-    .ai-send-btn:hover { background: var(--primary); }
-    .ai-send-btn:disabled { background: var(--grey); cursor: not-allowed; }
 
-    /* Resume Selection Modal */
+    .ai-send-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .ai-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -477,27 +994,37 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.4);
+      background-color: rgba(0, 0, 0, 0.7);
       animation: fadeIn 0.3s ease;
     }
-    .modal.open { display: flex; align-items: center; justify-content: center; }
+
+    .modal.open {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .modal-content {
       background-color: var(--card);
       padding: 2em;
       border-radius: var(--radius);
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
     }
+
     .modal-header {
       font-size: 1.3em;
       font-weight: 600;
       margin-bottom: 1em;
-      color: var(--primary);
+      color: var(--accent);
     }
+
     .modal-body {
       margin-bottom: 1.5em;
     }
+
     .resume-option {
       padding: 1em;
       margin-bottom: 0.8em;
@@ -505,129 +1032,119 @@
       border-radius: var(--radius);
       cursor: pointer;
       transition: all 0.2s;
+      background: rgba(20, 20, 20, 0.4);
     }
+
     .resume-option:hover {
       border-color: var(--accent);
-      background: #f8fafc;
+      background: rgba(212, 175, 55, 0.1);
     }
+
     .resume-option-title {
       font-weight: 600;
-      color: var(--primary);
+      color: var(--accent);
       margin-bottom: 0.3em;
     }
+
     .resume-option-desc {
       font-size: 0.9em;
       color: var(--grey);
     }
+
     .modal-actions {
       display: flex;
       gap: 1em;
     }
+
     .modal-actions button {
       flex: 1;
     }
+
     .btn-secondary {
       background: var(--grey) !important;
+      color: #000 !important;
     }
+
     .btn-secondary:hover {
-      background: #666 !important;
+      background: var(--border) !important;
     }
 
-    /* Company Career Portals Section */
-    .companies-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.2em;
-      margin-bottom: 1em;
-    }
-    .company-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 1.2em;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-    }
-    .company-card:hover {
-      box-shadow: 0 6px 20px rgba(41,98,255,.12);
-      transform: translateY(-2px);
-    }
-    .company-logo {
-      font-size: 2em;
-      margin-bottom: 0.5em;
-    }
-    .company-name {
-      font-weight: 600;
-      font-size: 1.05em;
-      margin-bottom: 0.3em;
-      color: var(--primary);
-    }
-    .company-type {
-      font-size: 0.85em;
-      color: var(--grey);
-      margin-bottom: 0.8em;
-    }
-    .company-links {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5em;
-    }
-    .company-link {
-      background: var(--accent);
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.5em 0.8em;
-      border-radius: var(--radius);
-      font-size: 0.9em;
-      display: inline-block;
-      text-align: center;
-      transition: background .2s;
-    }
-    .company-link:hover { background: var(--primary); }
-    .company-link.secondary {
-      background: #e0e3ee;
-      color: var(--primary);
-    }
-    .company-link.secondary:hover {
-      background: var(--border);
+    /* Responsive */
+    @media (max-width: 850px) {
+      main {
+        padding: 0.5em;
+      }
+      .weekly-plan {
+        gap: 0.4em;
+      }
+      .companies-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+      .ats-wrapper {
+        grid-template-columns: 1fr;
+      }
     }
 
-    /* RESPONSIVE */
-    @media (max-width:850px) {
-      main { padding: .5em; }
-      .weekly-plan { gap: .4em; }
-      .companies-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    @media (max-width: 720px) {
+      .nav-tabs {
+        gap: 0.1em;
+      }
+      main {
+        margin: 18px 0 0 0;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
     }
-    @media (max-width:720px) {
-      .nav-tabs { gap: .1em;}
-      main { margin:18px 0 0 0;}
+
+    @media (max-width: 650px) {
+      .card-grid {
+        grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      }
+      .weekly-plan {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .companies-grid {
+        grid-template-columns: 1fr;
+      }
+      .ats-score-container {
+        flex-direction: column;
+        text-align: center;
+      }
     }
-    @media (max-width:650px) {
-      .card-grid { grid-template-columns: repeat(auto-fit, minmax(165px,1fr));}
-      .ats-wrapper { grid-template-columns: 1fr; gap: .7em; }
-      .weekly-plan { grid-template-columns: repeat(2,1fr);}
-      .companies-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width:600px) {
-      header { font-size:1em;}
-      .navbar {padding:0 .6em;}
-      .weekly-plan { grid-template-columns: 1fr;}
+
+    @media (max-width: 600px) {
+      .navbar {
+        padding: 0 0.6em;
+      }
+      .header-controls {
+        width: 100%;
+        margin-top: 0.5em;
+      }
       .nav-tabs {
         flex-direction: column;
-        display:none;
+        display: none;
         background: var(--primary);
         position: absolute;
-        left:0; right:0;
+        left: 0;
+        right: 0;
         top: var(--mobile-nav-height);
-        z-index:12;
+        z-index: 12;
         padding: 0.9em 0;
       }
-      .nav-tabs.open { display: flex;}
-      .resume-btn { min-width: 115px;}
-      .hamburger { display: flex;}
-      main { padding:.24em;}
-      .weekly-plan {gap: .4em;}
+      .nav-tabs.open {
+        display: flex;
+      }
+      .hamburger {
+        display: flex;
+      }
+      main {
+        padding: 0.24em;
+      }
+      .weekly-plan {
+        grid-template-columns: 1fr;
+        gap: 0.4em;
+      }
       .ai-panel {
         width: 100%;
         height: 100%;
@@ -635,12 +1152,16 @@
         right: 0;
         border-radius: 0;
       }
-      .ai-btn { bottom: 20px; right: 20px; }
+      .ai-btn {
+        bottom: 20px;
+        right: 20px;
+      }
       .modal-content {
         width: 95%;
       }
     }
-    /* Hide skip-link visually except for screen readers and on focus for accessibility */
+
+    /* Accessibility */
     .skip-link {
       position: absolute;
       left: -999px;
@@ -649,81 +1170,95 @@
       height: 1px;
       overflow: hidden;
       z-index: 100;
-      background: #fff;
-      color: var(--primary);
-      padding:8px;
-      border-radius:8px;
-      border:1px solid var(--accent);
+      background: var(--accent);
+      color: #000;
+      padding: 8px;
+      border-radius: 8px;
+      font-weight: 600;
     }
+
     .skip-link:focus {
-      left: 16px; 
+      left: 16px;
       top: 16px;
       width: auto;
       height: auto;
-      outline: none;
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
   </style>
 </head>
+
 <body>
   <!-- Accessibility: skip to main content -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <header>
     <div class="navbar">
       <a href="#" class="logo" tabindex="1">InternOS</a>
       <nav>
         <ul class="nav-tabs" id="navTabs">
-          <li><button data-tab="overview"   class="active" aria-label="Overview">Overview</button></li>
-          <li><button data-tab="dashboard"  aria-label="Dashboard">Dashboard</button></li>
+          <li><button data-tab="overview" class="active" aria-label="Overview">Overview</button></li>
+          <li><button data-tab="dashboard" aria-label="Dashboard">Dashboard</button></li>
           <li><button data-tab="applications" aria-label="Applications">Applications</button></li>
-          <li><button data-tab="tracker"    aria-label="Tracker">Tracker</button></li>
-          <li><button data-tab="ats"        aria-label="ATS Scores">ATS Scores</button></li>
-          <li><button data-tab="planning"   aria-label="Planning">Planning</button></li>
-          <li><button data-tab="skills"     aria-label="Skills">Skills</button></li>
-          <li><button data-tab="sources"    aria-label="Sources">Sources</button></li>
-          <li><button data-tab="companies"  aria-label="Companies">Companies</button></li>
-          <li><button data-tab="weekly"     aria-label="Weekly Plan">Weekly Plan</button></li>
+          <li><button data-tab="tracker" aria-label="Tracker">Tracker</button></li>
+          <li><button data-tab="ats" aria-label="ATS Scores">ATS Scores</button></li>
+          <li><button data-tab="skills" aria-label="Skills">Skills</button></li>
+          <li><button data-tab="sources" aria-label="Sources">Sources</button></li>
+          <li><button data-tab="companies" aria-label="Companies">Companies</button></li>
+          <li><button data-tab="top100" aria-label="Top 100 Companies">Top 100</button></li>
+          <li><button data-tab="weekly" aria-label="Weekly Plan">Weekly Plan</button></li>
         </ul>
       </nav>
-      <button class="resume-btn" id="resumeBtn" tabindex="2" aria-label="My Resumes">📄 Resumes</button>
-      <div class="hamburger" id="hamburgerBtn" tabindex="3" aria-label="Open menu">
-        <div></div><div></div><div></div>
+      <div class="header-controls">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light theme">🌙</button>
+        <button class="resume-btn" id="resumeBtn" tabindex="2" aria-label="My Resumes">📄 Resumes</button>
+        <div class="hamburger" id="hamburgerBtn" tabindex="3" aria-label="Open menu">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
   </header>
+
   <main id="main-content">
     <!-- OVERVIEW TAB -->
     <section id="overview" class="active">
       <h2>Welcome to InternOS</h2>
       <p>
-        Your central hub for tracking internship applications, researching top sources, planning, and improving your chances—all in one clean, private dashboard. <br>
+        Your central hub for tracking internship applications, researching top sources, and improving your chances—all
+        in one sleek, private dashboard. <br>
         Use the navigation above to access different features.
       </p>
       <ul>
-        <li>Easily add, view & update all internship applications</li>
-        <li>Compare resume with job descriptions using ATS Score</li>
-        <li>Access India's top internship sources directly</li>
-        <li>Browse company career portals and apply directly</li>
-        <li>Select between multiple resumes based on role requirements</li>
-        <li>Plan your week, manage skills, and more—100% private, data is stored in your browser</li>
+        <li>✨ Easily add, view & update all internship applications</li>
+        <li>📊 Compare resume with job descriptions using ATS Score</li>
+        <li>🌐 Access India's top internship sources directly</li>
+        <li>🏢 Browse company career portals and apply directly</li>
+        <li>🎯 Explore Top 100 Companies for Internships</li>
+        <li>📑 Select between multiple resumes based on role requirements</li>
+        <li>🔒 Plan your week, manage skills, and more—100% private, data is stored in your browser</li>
       </ul>
     </section>
+
     <!-- DASHBOARD TAB -->
     <section id="dashboard">
       <h2>Dashboard</h2>
       <div id="dashboardApps"></div>
     </section>
+
     <!-- APPLICATIONS TAB -->
     <section id="applications">
       <h2>Applications</h2>
-      <form id="addAppForm" autocomplete="off" style="margin-bottom:1.2em;">
-        <div style="display:flex;gap:1em;flex-wrap:wrap;">
-          <div style="flex:1;">
+      <form id="addAppForm" autocomplete="off" style="margin-bottom: 1.2em;">
+        <div style="display: flex; gap: 1em; flex-wrap: wrap;">
+          <div style="flex: 1;">
             <input type="text" placeholder="Company" required id="appCompany">
           </div>
-          <div style="flex:1.3;">
+          <div style="flex: 1.3;">
             <input type="text" placeholder="Role (e.g. Data Analyst Intern)" required id="appRole">
           </div>
-          <div style="flex:1;">
+          <div style="flex: 1;">
             <select id="appStatus" required>
               <option value="">Status</option>
               <option value="to-apply">To Apply</option>
@@ -734,14 +1269,14 @@
               <option value="selected">Selected</option>
             </select>
           </div>
-          <div style="flex:1;">
+          <div style="flex: 1;">
             <input type="date" id="appDate" placeholder="Date applied">
           </div>
-          <div style="flex:1;">
+          <div style="flex: 1;">
             <input type="url" id="appLink" placeholder="Job Link (optional)">
           </div>
         </div>
-        <label style="font-weight:500; margin-bottom: 0.3em; display:block;">Select Resume</label>
+        <label style="font-weight: 500; margin-bottom: 0.3em; display: block;">Select Resume</label>
         <select id="appResume" required style="margin-bottom: 1em;">
           <option value="">Choose resume for this role</option>
           <option value="general">General Resume</option>
@@ -752,11 +1287,13 @@
       </form>
       <div id="applicationsList"></div>
     </section>
+
     <!-- TRACKER TAB -->
     <section id="tracker">
       <h2>Application Tracker</h2>
       <div id="trackerList"></div>
     </section>
+
     <!-- ATS TAB -->
     <section id="ats">
       <h2>ATS Resume Checker</h2>
@@ -770,19 +1307,16 @@
           <textarea id="atsResume" placeholder="Paste your resume's full text here"></textarea>
         </div>
       </div>
-      <button id="atsCheckBtn">Check Score</button>
-      <span id="ats-result"></span>
+      <button id="atsCheckBtn">Check ATS Score</button>
+      <div id="atsResultContainer"></div>
     </section>
-    <!-- PLANNING TAB -->
-    <section id="planning">
-      <h2>Planning</h2>
-      <p>Coming soon: Plan your application strategy here — set goals, deadlines, and reminders.</p>
-    </section>
+
     <!-- SKILLS TAB -->
     <section id="skills">
       <h2>Skills</h2>
       <p>Coming soon: Track skills you want to learn or improve for your target roles.</p>
     </section>
+
     <!-- SOURCES TAB -->
     <section id="sources">
       <h2>Top Internship Sources</h2>
@@ -790,7 +1324,8 @@
         <div class="card">
           <div class="card-title">LinkedIn Jobs</div>
           <div class="card-desc">Corporate, business & data internships</div>
-          <a class="card-link" href="https://www.linkedin.com/jobs/search/?keywords=internship&location=India" target="_blank" rel="noopener">Open LinkedIn</a>
+          <a class="card-link" href="https://www.linkedin.com/jobs/search/?keywords=internship&location=India"
+            target="_blank" rel="noopener">Open LinkedIn</a>
         </div>
         <div class="card">
           <div class="card-title">Wellfound</div>
@@ -800,17 +1335,20 @@
         <div class="card">
           <div class="card-title">Indeed India</div>
           <div class="card-desc">Wide range of Indian internships</div>
-          <a class="card-link" href="https://in.indeed.com/jobs?q=internship&l=India" target="_blank" rel="noopener">Open Indeed</a>
+          <a class="card-link" href="https://in.indeed.com/jobs?q=internship&l=India" target="_blank"
+            rel="noopener">Open Indeed</a>
         </div>
         <div class="card">
           <div class="card-title">Internshala</div>
           <div class="card-desc">Campus + off-campus, all locations</div>
-          <a class="card-link" href="https://internshala.com/internships" target="_blank" rel="noopener">Open Internshala</a>
+          <a class="card-link" href="https://internshala.com/internships" target="_blank"
+            rel="noopener">Open Internshala</a>
         </div>
         <div class="card">
           <div class="card-title">Naukri</div>
           <div class="card-desc">Major Indian internship listings</div>
-          <a class="card-link" href="https://www.naukri.com/internship-jobs" target="_blank" rel="noopener">Open Naukri</a>
+          <a class="card-link" href="https://www.naukri.com/internship-jobs" target="_blank"
+            rel="noopener">Open Naukri</a>
         </div>
         <div class="card">
           <div class="card-title">Unstop</div>
@@ -820,7 +1358,8 @@
         <div class="card">
           <div class="card-title">IIMJobs</div>
           <div class="card-desc">MBA/business internships</div>
-          <a class="card-link" href="https://www.iimjobs.com/j/internship" target="_blank" rel="noopener">Open IIMJobs</a>
+          <a class="card-link" href="https://www.iimjobs.com/j/internship" target="_blank"
+            rel="noopener">Open IIMJobs</a>
         </div>
         <div class="card">
           <div class="card-title">Handshake</div>
@@ -830,16 +1369,36 @@
         <div class="card">
           <div class="card-title">Glassdoor</div>
           <div class="card-desc">Company reviews & salaries</div>
-          <a class="card-link" href="https://www.glassdoor.co.in/Job/internship-jobs-SRCH_KO0,10.htm" target="_blank" rel="noopener">Open Glassdoor</a>
+          <a class="card-link" href="https://www.glassdoor.co.in/Job/internship-jobs-SRCH_KO0,10.htm" target="_blank"
+            rel="noopener">Open Glassdoor</a>
         </div>
       </div>
     </section>
+
     <!-- COMPANIES TAB -->
     <section id="companies">
       <h2>Company Career Portals</h2>
-      <p style="color: var(--grey); margin-bottom: 1.5em;">Direct links to apply for internships at top companies, MNCs, and firms</p>
+      <p style="color: var(--grey); margin-bottom: 1.5em;">Direct links to apply for internships at top companies,
+        MNCs, and firms</p>
       <div class="companies-grid" id="companiesGrid"></div>
     </section>
+
+    <!-- TOP 100 COMPANIES TAB -->
+    <section id="top100">
+      <h2>🏆 Top 100 Companies for Internships</h2>
+      <p style="color: var(--grey); margin-bottom: 1.5em;">Discover the best companies hiring interns across India</p>
+      <div class="company-search-container">
+        <input type="text" class="search-input" id="companySearchInput" placeholder="Search company name...">
+      </div>
+      <div class="companies-grid" id="top100Grid">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+      <div id="top100Empty" style="display: none;"></div>
+    </section>
+
     <!-- WEEKLY PLAN TAB -->
     <section id="weekly">
       <h2>Weekly Plan</h2>
@@ -886,527 +1445,566 @@
     </div>
   </div>
 
-<script>
-  // ── Offline AI Assistant ──
-  const STARTER_CHIPS = [
-    "Find Data Analyst internships",
-    "Write a cold email to a recruiter",
-    "Check my resume for ATS",
-    "Prep me for a BA interview"
-  ];
+  <script>
+    // ───────────────────────────────────────────────────────
+    // THEME TOGGLE
+    // ───────────────────────────────────────────────────────
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
 
-  const AI_RESPONSES = {
-    "find data analyst internships": "Here are the best platforms for Data Analyst internships:\n\n1. **LinkedIn Jobs**: Search 'Data Analyst Internship India' - Filter by internship, location, and experience level\n2. **Wellfound**: Great for startup data roles with modern tech stacks\n3. **Internshala**: Use advanced filters for Data Analyst roles\n4. **Naukri**: Indian companies often post here\n5. **Unstop**: Check competitions + internships section\n\nTip: Apply to 5-7 roles daily and customize your resume for each application.",
-    
-    "write a cold email to a recruiter": "Here's a template for a cold email:\n\n**Subject**: Data Analyst Intern at [Company] - IIM Student\n\nHi [Recruiter Name],\n\nI'm [Your Name], an IPM student at IIM Bodh Gaya interested in Data Analytics. I've worked on [mention a relevant project], and I'm excited about [company]'s work in [specific domain].\n\nI'd love to discuss how I can contribute to your team. My resume is attached.\n\nBest regards,\n[Your Name]\n\n**Tips**: Personalize it, keep it short (3-4 sentences), mention why them specifically, and follow up after 1 week.",
-    
-    "check my resume for ats": "Use the ATS Checker in the 'ATS Scores' tab to compare your resume against a job description. Here are optimization tips:\n\n✓ Include keywords from the JD (data analysis, Python, SQL, Tableau)\n✓ Use standard fonts (Arial, Calibri)\n✓ Avoid tables, graphics, and special characters\n✓ Include metrics in your bullets (e.g., 'Improved efficiency by 25%')\n✓ Match the job title format from the JD\n✓ Keep one-page for internships, 1.5 pages for experienced roles",
-    
-    "prep me for a ba interview": "Here's a quick prep framework:\n\n**Technical Round:**\n- Case study: Market sizing, profitability analysis\n- SQL/Data analysis: Simple queries, insights from data\n- Excel: Pivot tables, formulas, charts\n\n**HR Round:**\n- Why this company?\n- Biggest challenge you've faced\n- Why should we hire you?\n- What are your weaknesses?\n\n**Tips**: Practice 2-3 case studies, review past projects, prepare questions for them too.",
-    
-    "default": "I'm InternOS Assistant! I can help you with:\n• Finding internship opportunities\n• Writing cold emails to recruiters\n• Resume optimization and ATS checking\n• Interview preparation (cases, SQL, HR)\n• Career guidance\n\nJust ask me anything related to internships!"
-  };
-
-  let aiMessages = JSON.parse(localStorage.getItem('internos_ai_messages') || '[]');
-  let aiWaitingForResponse = false;
-
-  function toggleAIPanel() {
-    const panel = document.getElementById('aiPanel');
-    panel.classList.toggle('open');
-    if (panel.classList.contains('open')) {
-      initializeAIPanel();
+    // Load theme preference from localStorage
+    const savedTheme = localStorage.getItem('internos_theme') || 'dark';
+    if (savedTheme === 'light') {
+      htmlElement.classList.add('light-mode');
+      themeToggle.textContent = '🌞';
     }
-  }
 
-  function initializeAIPanel() {
-    const messagesDiv = document.getElementById('aiMessages');
-    const chipsDiv = document.getElementById('aiChips');
+    themeToggle.addEventListener('click', () => {
+      htmlElement.classList.toggle('light-mode');
+      const isLight = htmlElement.classList.contains('light-mode');
+      localStorage.setItem('internos_theme', isLight ? 'light' : 'dark');
+      themeToggle.textContent = isLight ? '🌞' : '🌙';
+    });
 
-    if (aiMessages.length === 0) {
-      chipsDiv.innerHTML = STARTER_CHIPS.map(chip => 
-        `<button class="ai-chip" onclick="sendAIChip('${chip}')">${chip}</button>`
-      ).join('');
-    } else {
-      renderAIMessages();
-      chipsDiv.innerHTML = '';
-    }
-  }
+    // ───────────────────────────────────────────────────────
+    // NAVIGATION
+    // ───────────────────────────────────────────────────────
+    const navButtons = document.querySelectorAll('.nav-tabs button');
+    const sections = document.querySelectorAll('section');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const navTabs = document.getElementById('navTabs');
 
-  function sendAIChip(text) {
-    const input = document.getElementById('aiInput');
-    input.value = text;
-    sendAIMessage();
-  }
+    navButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
 
-  function getAIResponse(userMessage) {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    for (let key in AI_RESPONSES) {
-      if (lowerMessage.includes(key)) {
-        return AI_RESPONSES[key];
+        const tabName = e.target.getAttribute('data-tab');
+        sections.forEach(section => section.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+
+        navTabs.classList.remove('open');
+      });
+    });
+
+    hamburgerBtn.addEventListener('click', () => {
+      navTabs.classList.toggle('open');
+    });
+
+    // ───────────────────────────────────────────────────────
+    // APPLICATIONS MANAGEMENT
+    // ───────────────────────────────────────────────────────
+    let applications = JSON.parse(localStorage.getItem('internos_apps') || '[]');
+
+    document.getElementById('addAppForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const app = {
+        id: Date.now(),
+        company: document.getElementById('appCompany').value,
+        role: document.getElementById('appRole').value,
+        status: document.getElementById('appStatus').value,
+        date: document.getElementById('appDate').value,
+        link: document.getElementById('appLink').value,
+        resume: document.getElementById('appResume').value,
+        notes: document.getElementById('appNotes').value
+      };
+      applications.push(app);
+      localStorage.setItem('internos_apps', JSON.stringify(applications));
+      document.getElementById('addAppForm').reset();
+      renderApplications();
+      renderDashboard();
+    });
+
+    function renderApplications() {
+      const list = document.getElementById('applicationsList');
+      if (applications.length === 0) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div>No applications yet. Start tracking!</div>';
+        return;
       }
-    }
-    
-    return AI_RESPONSES["default"];
-  }
 
-  function sendAIMessage() {
-    const input = document.getElementById('aiInput');
-    const message = input.value.trim();
-    if (!message || aiWaitingForResponse) return;
-
-    aiMessages.push({ role: 'user', content: message });
-    input.value = '';
-    renderAIMessages();
-    document.getElementById('aiChips').innerHTML = '';
-
-    aiWaitingForResponse = true;
-    const messagesDiv = document.getElementById('aiMessages');
-    messagesDiv.innerHTML += `
-      <div class="ai-message bot">
-        <div class="ai-typing">
-          <div class="ai-dot"></div>
-          <div class="ai-dot"></div>
-          <div class="ai-dot"></div>
-        </div>
-      </div>
-    `;
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    setTimeout(() => {
-      const response = getAIResponse(message);
-      aiMessages.push({ role: 'assistant', content: response });
-      localStorage.setItem('internos_ai_messages', JSON.stringify(aiMessages));
-      renderAIMessages();
-      aiWaitingForResponse = false;
-    }, 800);
-  }
-
-  function renderAIMessages() {
-    const messagesDiv = document.getElementById('aiMessages');
-    messagesDiv.innerHTML = aiMessages.map(msg => `
-      <div class="ai-message ${msg.role}">
-        <div class="ai-msg-bubble">${msg.content.replace(/\n/g, '<br>')}</div>
-      </div>
-    `).join('');
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  document.getElementById('aiBtnToggle').onclick = toggleAIPanel;
-  document.getElementById('aiCloseBtn').onclick = toggleAIPanel;
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.activeElement === document.getElementById('aiInput')) {
-      sendAIMessage();
-    }
-  });
-
-  // ── Resume Modal Functions ──
-  function openResumeModal() {
-    document.getElementById('resumeModal').classList.add('open');
-  }
-  
-  function closeResumeModal() {
-    document.getElementById('resumeModal').classList.remove('open');
-  }
-
-  function openResume(type) {
-    window.open('https://drive.google.com/drive/folders/1BuEZ6fvs5lnYg50xZjSX9WM7DWAdT5iM?q=type:pdf%20parent:1BuEZ6fvs5lnYg50xZjSX9WM7DWAdT5iM%20owner:me%20sharedwith:public', '_blank');
-    closeResumeModal();
-  }
-
-  document.getElementById('resumeBtn').onclick = openResumeModal;
-
-  // ── Company Career Portals ──
-  const COMPANIES = [
-    {
-      name: 'McKinsey',
-      logo: '🎯',
-      type: 'Consulting',
-      careers: 'https://www.mckinsey.com/careers',
-      jobs: 'https://www.mckinsey.com/careers/search-jobs'
-    },
-    {
-      name: 'Boston Consulting Group',
-      logo: '💼',
-      type: 'Consulting',
-      careers: 'https://www.bcg.com/en-in/careers',
-      jobs: 'https://www.bcg.com/en-in/careers/job-openings'
-    },
-    {
-      name: 'Bain & Company',
-      logo: '📊',
-      type: 'Consulting',
-      careers: 'https://www.bain.com/careers/',
-      jobs: 'https://www.bain.com/careers/job-search/'
-    },
-    {
-      name: 'Goldman Sachs',
-      logo: '💰',
-      type: 'Finance',
-      careers: 'https://www.goldmansachs.com/careers/',
-      jobs: 'https://www.goldmansachs.com/careers/job-search/'
-    },
-    {
-      name: 'Morgan Stanley',
-      logo: '📈',
-      type: 'Finance',
-      careers: 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/user-interviews-ext/req-4/p-home/',
-      jobs: 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/user-interviews-ext/req-4/p-job-search/'
-    },
-    {
-      name: 'Deloitte',
-      logo: '🏛️',
-      type: 'Consulting & Audit',
-      careers: 'https://www2.deloitte.com/in/en/careers.html',
-      jobs: 'https://jobs.deloitte.com/in/en'
-    },
-    {
-      name: 'EY (Ernst & Young)',
-      logo: '🔷',
-      type: 'Consulting & Audit',
-      careers: 'https://www.ey.com/en_in/careers',
-      jobs: 'https://careers.ey.com/in/en/search-jobs'
-    },
-    {
-      name: 'KPMG',
-      logo: '📋',
-      type: 'Audit & Advisory',
-      careers: 'https://home.kpmg/in/en/careers.html',
-      jobs: 'https://careers.kpmg-india.com/'
-    },
-    {
-      name: 'PwC',
-      logo: '🔶',
-      type: 'Professional Services',
-      careers: 'https://www.pwc.in/en/careers.html',
-      jobs: 'https://jobs.pwc.com/in/en'
-    },
-    {
-      name: 'Flipkart',
-      logo: '📦',
-      type: 'E-commerce',
-      careers: 'https://www.flipkartcareers.com/',
-      jobs: 'https://www.flipkartcareers.com/jobs'
-    },
-    {
-      name: 'Amazon',
-      logo: '🛒',
-      type: 'Tech & E-commerce',
-      careers: 'https://www.amazon.jobs/en-in/',
-      jobs: 'https://www.amazon.jobs/en-in/search'
-    },
-    {
-      name: 'Google',
-      logo: '🔍',
-      type: 'Technology',
-      careers: 'https://careers.google.com/jobs/results/?location=India',
-      jobs: 'https://careers.google.com/jobs/results/?company=Google&location=India'
-    },
-    {
-      name: 'Microsoft',
-      logo: '🪟',
-      type: 'Technology',
-      careers: 'https://careers.microsoft.com/us/en/search-jobs',
-      jobs: 'https://careers.microsoft.com/us/en/search-jobs?s=1'
-    },
-    {
-      name: 'IBM',
-      logo: '💻',
-      type: 'Technology',
-      careers: 'https://www.ibm.com/careers/',
-      jobs: 'https://careers.ibm.com/ListJobs/All/'
-    },
-    {
-      name: 'TCS (Tata Consultancy)',
-      logo: '🏢',
-      type: 'IT Services',
-      careers: 'https://www.tcs.com/careers',
-      jobs: 'https://www.tcs.com/careers/search'
-    },
-    {
-      name: 'Infosys',
-      logo: '📱',
-      type: 'IT Services',
-      careers: 'https://www.infosys.com/careers/',
-      jobs: 'https://www.infosys.com/careers/job-search.html'
-    },
-    {
-      name: 'Accenture',
-      logo: '🎨',
-      type: 'IT Services',
-      careers: 'https://www.accenture.com/in-en/careers',
-      jobs: 'https://www.accenture.com/in-en/careers/jobsearch'
-    },
-    {
-      name: 'Capgemini',
-      logo: '🚀',
-      type: 'IT Services',
-      careers: 'https://www.capgemini.com/in-en/careers/',
-      jobs: 'https://www.capgemini.com/in-en/careers/job-search/'
-    },
-    {
-      name: 'ICICI Bank',
-      logo: '🏦',
-      type: 'Banking',
-      careers: 'https://www.icicibank.com/personal/careers/home.page',
-      jobs: 'https://www.icicibank.com/careers'
-    },
-    {
-      name: 'HDFC Bank',
-      logo: '💳',
-      type: 'Banking',
-      careers: 'https://www.hdfcbank.com/personal/careers/',
-      jobs: 'https://careers.hdfcbank.com/'
-    },
-    {
-      name: 'Unilever',
-      logo: '🌍',
-      type: 'FMCG',
-      careers: 'https://www.unilever.co.in/careers/',
-      jobs: 'https://www.unilever.co.in/careers/our-opportunities/'
-    },
-    {
-      name: 'P&G (Procter & Gamble)',
-      logo: '🧴',
-      type: 'FMCG',
-      careers: 'https://us.pg.com/careers/',
-      jobs: 'https://us.pg.com/careers/explore-opportunities/'
-    },
-    {
-      name: 'Nestle',
-      logo: '🍫',
-      type: 'FMCG',
-      careers: 'https://www.nestle.co.in/careers',
-      jobs: 'https://www.nestle.co.in/careers/job-openings'
-    },
-    {
-      name: 'Shell',
-      logo: '⚡',
-      type: 'Energy',
-      careers: 'https://www.shell.com/careers.html',
-      jobs: 'https://www.shell.com/careers/job-search.html'
-    },
-    {
-      name: 'Hindustan Unilever',
-      logo: '🏪',
-      type: 'FMCG',
-      careers: 'https://www.hul.co.in/careers',
-      jobs: 'https://www.hul.co.in/careers/join-us'
-    }
-  ];
-
-  function renderCompanies() {
-    const grid = document.getElementById('companiesGrid');
-    let html = '';
-    COMPANIES.forEach(company => {
-      html += `
-        <div class="company-card">
-          <div class="company-logo">${company.logo}</div>
-          <div class="company-name">${company.name}</div>
-          <div class="company-type">${company.type}</div>
-          <div class="company-links">
-            <a class="company-link" href="${company.jobs}" target="_blank" rel="noopener">View Jobs →</a>
-            <a class="company-link secondary" href="${company.careers}" target="_blank" rel="noopener">Careers Page</a>
-          </div>
-        </div>
+      list.innerHTML = `
+        <table class="apps-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Resume</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${applications.map(app => `
+              <tr>
+                <td>${app.company}</td>
+                <td>${app.role}</td>
+                <td><span class="status-badge ${app.status}">${app.status.replace('-', ' ').toUpperCase()}</span></td>
+                <td>${app.date || 'N/A'}</td>
+                <td>${app.resume}</td>
+                <td>
+                  ${app.link ? `<a href="${app.link}" target="_blank" style="color: var(--accent); text-decoration: none;">🔗</a>` : '—'}
+                  <button onclick="deleteApp(${app.id})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2em;">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
       `;
-    });
-    grid.innerHTML = html;
-  }
-
-  renderCompanies();
-
-  // ────────────────────────────────────────────────────
-  // NAVIGATION: Hamburger + Tabs
-  const navTabs = document.getElementById('navTabs');
-  const tabs = navTabs.querySelectorAll('button');
-  const sections = document.querySelectorAll('main section');
-  function showTab(tabId) {
-    tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
-    sections.forEach(s => s.classList.toggle('active', s.id === tabId));
-    if(window.innerWidth < 601) navTabs.classList.remove('open');
-    window.location.hash = tabId !== 'overview' ? '#' + tabId : '';
-  }
-  tabs.forEach(btn => btn.onclick = ()=> showTab(btn.dataset.tab));
-  document.getElementById('hamburgerBtn').onclick = ()=> {
-    navTabs.classList.toggle('open');
-  }
-  if(location.hash) {
-    const hashTab = location.hash.slice(1);
-    if(document.getElementById(hashTab)) showTab(hashTab);
-  }
-
-  // ATS SCORE CHECKER
-  document.getElementById('atsCheckBtn').onclick = function() {
-    const jd = document.getElementById('atsJobDesc').value;
-    const resume = document.getElementById('atsResume').value;
-    if(!jd.trim()||!resume.trim()){
-      document.getElementById('ats-result').textContent = "Paste both JD and Resume!";
-      return;
     }
-    function extractKeywords(text) {
-      return Array.from(
-        new Set(
-          text.toLowerCase()
-          .replace(/[^a-z0-9\s]/gi, " ")
-          .replace(/[\r\n]/g, " ")
-          .split(" ")
-          .filter(w => w.length > 3 && !["internship","internships","about","role","company","work","will","you","your","skills","with","for","not","the","and","are","that","from","apply","have"].includes(w))
-        )
-      );
-    }
-    const jdKw   = extractKeywords(jd);
-    const resKw  = extractKeywords(resume);
-    if(jdKw.length < 8) {
-      document.getElementById('ats-result').textContent = "JD too short. Paste full job description.";
-      return;
-    }
-    let count = 0;
-    jdKw.forEach(kw=>{
-      if(resKw.includes(kw)) count++;
-    });
-    const pct = Math.round((count/jdKw.length)*100);
-    let msg = pct+"% match";
-    if (pct>=70) msg += " 👍 High";
-    else if (pct>=40) msg += " 🟡 Moderate";
-    else msg += " ⚠️ Add more keywords!";
-    document.getElementById('ats-result').textContent = msg;
-  };
 
-  // APPLICATION DATA (localStorage)
-  const apps = JSON.parse(localStorage.getItem('internos_apps') || '[]');
-  const tracker = JSON.parse(localStorage.getItem('internos_tracker') || '{}');
-  const weekly = JSON.parse(localStorage.getItem('internos_weekly') || '{}');
-
-  // Render Applications
-  function renderApplications() {
-    const list = document.getElementById('applicationsList');
-    if(apps.length === 0) {
-      list.innerHTML = '<div class="empty-state">No applications yet. Add one above!</div>';
-      return;
-    }
-    let html = '<table class="apps-table"><thead><tr><th>Company</th><th>Role</th><th>Resume</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
-    apps.forEach((app, idx) => {
-      html += `<tr>
-        <td>${app.company}</td>
-        <td>${app.role}</td>
-        <td><span style="font-size:0.9em;background:#e3f0fd;padding:0.3em 0.6em;border-radius:4px;">${app.resume === 'general' ? '📄 General' : '💻 Technical'}</span></td>
-        <td><span class="status-badge ${app.status}">${app.status.replace(/-/g, ' ')}</span></td>
-        <td>${app.date || '-'}</td>
-        <td style="font-size:0.9em;"><button onclick="deleteApp(${idx})" style="padding:0.3em 0.6em;margin-right:0.3em;">Delete</button> <button onclick="editApp(${idx})" style="padding:0.3em 0.6em;">Edit</button></td>
-      </tr>`;
-    });
-    html += '</tbody></table>';
-    list.innerHTML = html;
-  }
-  function deleteApp(idx) {
-    if(confirm('Delete this application?')) {
-      apps.splice(idx, 1);
-      localStorage.setItem('internos_apps', JSON.stringify(apps));
+    function deleteApp(id) {
+      applications = applications.filter(app => app.id !== id);
+      localStorage.setItem('internos_apps', JSON.stringify(applications));
       renderApplications();
       renderDashboard();
     }
-  }
-  function editApp(idx) {
-    const app = apps[idx];
-    document.getElementById('appCompany').value = app.company;
-    document.getElementById('appRole').value = app.role;
-    document.getElementById('appStatus').value = app.status;
-    document.getElementById('appDate').value = app.date;
-    document.getElementById('appLink').value = app.link || '';
-    document.getElementById('appResume').value = app.resume || 'general';
-    document.getElementById('appNotes').value = app.notes || '';
-    apps.splice(idx, 1);
-    localStorage.setItem('internos_apps', JSON.stringify(apps));
-    renderApplications();
-    renderDashboard();
-    document.getElementById('appCompany').focus();
-  }
-  document.getElementById('addAppForm').onsubmit = function(e) {
-    e.preventDefault();
-    const app = {
-      company: document.getElementById('appCompany').value,
-      role: document.getElementById('appRole').value,
-      status: document.getElementById('appStatus').value,
-      date: document.getElementById('appDate').value,
-      link: document.getElementById('appLink').value,
-      resume: document.getElementById('appResume').value,
-      notes: document.getElementById('appNotes').value
+
+    function renderDashboard() {
+      const dashboard = document.getElementById('dashboardApps');
+      const total = applications.length;
+      const selected = applications.filter(a => a.status === 'selected').length;
+      const interviewing = applications.filter(a => a.status === 'interview').length;
+      const applied = applications.filter(a => a.status === 'applied').length;
+
+      dashboard.innerHTML = `
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Total Applications</div>
+            <div style="font-size: 2.5em; color: var(--accent); font-weight: 700; margin: 0.5em 0;">${total}</div>
+            <div class="card-desc">All applications tracked</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Selected</div>
+            <div style="font-size: 2.5em; color: var(--success); font-weight: 700; margin: 0.5em 0;">${selected}</div>
+            <div class="card-desc">Offers received</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Interviewing</div>
+            <div style="font-size: 2.5em; color: var(--orange); font-weight: 700; margin: 0.5em 0;">${interviewing}</div>
+            <div class="card-desc">In interview stage</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Applied</div>
+            <div style="font-size: 2.5em; color: var(--blue); font-weight: 700; margin: 0.5em 0;">${applied}</div>
+            <div class="card-desc">Applications sent</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ───────────────────────────────────────────────────────
+    // TRACKER
+    // ───────────────────────────────────────────────────────
+    function renderTracker() {
+      const tracker = document.getElementById('trackerList');
+      if (applications.length === 0) {
+        tracker.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div>No applications to track yet.</div>';
+        return;
+      }
+
+      tracker.innerHTML = `
+        <table class="tracker-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Days Applied</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${applications.map(app => {
+        const daysAgo = app.date ? Math.floor((new Date() - new Date(app.date)) / (1000 * 60 * 60 * 24)) : 'N/A';
+        return `
+              <tr>
+                <td><strong>${app.company}</strong></td>
+                <td>${app.role}</td>
+                <td><span class="status-badge ${app.status}">${app.status.replace('-', ' ')}</span></td>
+                <td>${typeof daysAgo === 'number' ? daysAgo + ' days' : daysAgo}</td>
+                <td>${app.notes || '—'}</td>
+              </tr>
+            `;
+      }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // ───────────────────────────────────────────────────────
+    // ATS CHECKER - ENHANCED
+    // ───────────────────────────────────────────────────────
+    document.getElementById('atsCheckBtn').addEventListener('click', () => {
+      const jobDesc = document.getElementById('atsJobDesc').value.trim();
+      const resume = document.getElementById('atsResume').value.trim();
+
+      if (!jobDesc || !resume) {
+        alert('Please paste both job description and resume');
+        return;
+      }
+
+      calculateATSScore(jobDesc, resume);
+    });
+
+    function calculateATSScore(jobDesc, resume) {
+      // Extract keywords from both texts
+      const jobKeywords = extractKeywords(jobDesc);
+      const resumeKeywords = extractKeywords(resume);
+
+      // Find matched and missing keywords
+      const matched = jobKeywords.filter(k => resumeKeywords.includes(k));
+      const missing = jobKeywords.filter(k => !matched.includes(k)).slice(0, 10);
+
+      // Calculate score
+      const score = Math.min(100, Math.round((matched.length / jobKeywords.length) * 100));
+
+      // Determine score level
+      let level = score >= 80 ? 'excellent' : score >= 60 ? 'good' : 'poor';
+      let levelText = level === 'excellent' ? '🟢 Excellent' : level === 'good' ? '🟡 Good' : '🔴 Poor';
+
+      const resultHTML = `
+        <div class="ats-result-section">
+          <div class="ats-score-container">
+            <div class="ats-score-circle ${level}">
+              ${score}%
+            </div>
+            <div class="ats-score-details">
+              <h3>Overall ATS Score</h3>
+              <p><strong>${levelText}</strong></p>
+              <p>Your resume matches ${matched.length} out of ${jobKeywords.length} key requirements</p>
+            </div>
+          </div>
+
+          <div class="ats-section">
+            <h4>📋 What the JD Needs (Top Keywords)</h4>
+            <div class="keyword-list">
+              ${jobKeywords.slice(0, 15).map(k => `<div class="keyword-tag">${k}</div>`).join('')}
+            </div>
+          </div>
+
+          <div class="ats-section">
+            <h4>✅ What Your Resume Has</h4>
+            <div class="keyword-list">
+              ${matched.map(k => `<div class="keyword-tag matched">${k}</div>`).join('')}
+            </div>
+            <p style="color: var(--success); margin-top: 1em;">Matched: ${matched.length} keywords</p>
+          </div>
+
+          <div class="ats-section">
+            <h4>❌ Missing Keywords</h4>
+            <div class="keyword-list">
+              ${missing.map(k => `<div class="keyword-tag missing">${k}</div>`).join('')}
+            </div>
+            <p style="color: var(--danger); margin-top: 1em;">Add these to improve your score</p>
+          </div>
+
+          <div class="ats-section">
+            <h4>💪 Your Strengths</h4>
+            <div class="ats-suggestion">✨ Strong technical keyword coverage - You've mentioned key technical terms from the job description</div>
+            <div class="ats-suggestion">🎯 Relevant experience - Your background aligns with ${Math.round(matched.length / jobKeywords.length * 100)}% of role requirements</div>
+            <div class="ats-suggestion">📈 Growth potential - Adding missing skills will boost your ATS score significantly</div>
+          </div>
+
+          <div class="ats-section">
+            <h4>🔧 Areas to Improve</h4>
+            <div class="ats-suggestion">⚠️ Missing key technical skills - Consider adding ${missing.slice(0, 3).join(', ')} to your resume</div>
+            <div class="ats-suggestion">📊 Quantify achievements - Use metrics and numbers in your bullet points</div>
+            <div class="ats-suggestion">🔑 Keywords placement - Add missing keywords naturally in experience descriptions</div>
+            <div class="ats-suggestion">📝 Match job title - Try to use similar terminology from the JD in your resume</div>
+          </div>
+
+          <div class="ats-section">
+            <h4>✏️ Suggested Improvements</h4>
+            <div style="background: rgba(20, 20, 20, 0.4); padding: 1em; border-radius: var(--radius); margin-bottom: 1em;">
+              <strong style="color: var(--accent);">Before:</strong>
+              <p>Managed data and created reports</p>
+            </div>
+            <div style="background: rgba(81, 207, 102, 0.15); padding: 1em; border-radius: var(--radius);">
+              <strong style="color: var(--success);">After:</strong>
+              <p>Analyzed 50K+ data points using ${missing.slice(0, 2).join(', ') || 'Python & SQL'} to generate weekly reports, improving team efficiency by 25%</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('atsResultContainer').innerHTML = resultHTML;
+    }
+
+    function extractKeywords(text) {
+      const commonWords = new Set(['the', 'a', 'an', 'and', 'or', 'is', 'are', 'was', 'were', 'be', 'to', 'of', 'in', 'on', 'at', 'by', 'for', 'with', 'from', 'up', 'about', 'into', 'through', 'during', 'you', 'your', 'i', 'we', 'he', 'she', 'it', 'they', 'that', 'this', 'these', 'those', 'if', 'else', 'how', 'what', 'which', 'why', 'where', 'when']);
+
+      return text
+        .toLowerCase()
+        .match(/\b[a-z]{3,}\b/g)
+        ?.filter(word => !commonWords.has(word))
+        ?.filter((word, index, self) => self.indexOf(word) === index) // unique only
+        ?.slice(0, 30) || [];
+    }
+
+    // ───────────────────────────────────────────────────────
+    // TOP 100 COMPANIES
+    // ───────────────────────────────────────────────────────
+    let top100Companies = [];
+
+    async function loadTop100Companies() {
+      try {
+        // Simulate loading companies (in real app, would fetch from JSON)
+        // For now, we'll create sample data
+        top100Companies = [
+          { id: 1, name: 'Google', industry: 'Technology', logo: '🔎', careers: 'https://careers.google.com/jobs/results/' },
+          { id: 2, name: 'Microsoft', industry: 'Technology', logo: '🪟', careers: 'https://careers.microsoft.com/' },
+          { id: 3, name: 'Amazon', industry: 'E-commerce', logo: '📦', careers: 'https://www.amazon.jobs/en/' },
+          { id: 4, name: 'Apple', industry: 'Technology', logo: '🍎', careers: 'https://www.apple.com/jobs/in/' },
+          { id: 5, name: 'Meta', industry: 'Technology', logo: '📱', careers: 'https://www.metacareers.com/' },
+          { id: 6, name: 'Tesla', industry: 'Automotive', logo: '⚡', careers: 'https://www.tesla.com/careers' },
+          { id: 7, name: 'Netflix', industry: 'Entertainment', logo: '🎬', careers: 'https://jobs.netflix.com/' },
+          { id: 8, name: 'Spotify', industry: 'Music Tech', logo: '🎵', careers: 'https://www.spotifyjobs.com/' },
+          { id: 9, name: 'Adobe', industry: 'Software', logo: '🎨', careers: 'https://careers.adobe.com/' },
+          { id: 10, name: 'Salesforce', industry: 'Enterprise', logo: '☁️', careers: 'https://www.salesforce.com/careers/' },
+          { id: 11, name: 'IBM', industry: 'IT Services', logo: '🖥️', careers: 'https://www.ibm.com/careers/' },
+          { id: 12, name: 'Intel', industry: 'Semiconductors', logo: '🔌', careers: 'https://www.intel.com/content/www/us/en/careers/careers-home.html' },
+          { id: 13, name: 'Goldman Sachs', industry: 'Finance', logo: '💰', careers: 'https://www.goldmansachs.com/careers/' },
+          { id: 14, name: 'JPMorgan Chase', industry: 'Banking', logo: '🏦', careers: 'https://careers.jpmorgan.com/global/en/home' },
+          { id: 15, name: 'McKinsey & Company', industry: 'Consulting', logo: '📊', careers: 'https://www.mckinsey.com/careers' },
+          { id: 16, name: 'Accenture', industry: 'Consulting', logo: '🚀', careers: 'https://careers.accenture.com/' },
+          { id: 17, name: 'Deloitte', industry: 'Consulting', logo: '💼', careers: 'https://www2.deloitte.com/global/en/careers.html' },
+          { id: 18, name: 'PwC', industry: 'Audit & Tax', logo: '📈', careers: 'https://www.pwccareers.com/' },
+          { id: 19, name: 'EY', industry: 'Consulting', logo: '🌟', careers: 'https://careers.ey.com/' },
+          { id: 20, name: 'KPMG', industry: 'Audit', logo: '✅', careers: 'https://home.kpmg/en/en/home/careers.html' }
+        ];
+
+        renderTop100Companies(top100Companies);
+      } catch (error) {
+        console.error('Error loading companies:', error);
+      }
+    }
+
+    function renderTop100Companies(companies) {
+      const grid = document.getElementById('top100Grid');
+      const empty = document.getElementById('top100Empty');
+
+      if (companies.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = 'block';
+        empty.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>No companies found matching your search</div>';
+        return;
+      }
+
+      grid.style.display = 'grid';
+      empty.style.display = 'none';
+
+      grid.innerHTML = companies.map(company => `
+        <div class="company-card">
+          <div class="company-logo">${company.logo}</div>
+          <div class="company-name">${company.name}</div>
+          <div class="company-type">${company.industry}</div>
+          <div class="company-links">
+            <a class="company-link" href="${company.careers}" target="_blank" rel="noopener">View Openings</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Search functionality
+    document.getElementById('companySearchInput')?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      const filtered = top100Companies.filter(company =>
+        company.name.toLowerCase().includes(query) ||
+        company.industry.toLowerCase().includes(query)
+      );
+      renderTop100Companies(filtered);
+    });
+
+    // ───────────────────────────────────────────────────────
+    // WEEKLY PLAN
+    // ───────────────────────────────────────────────────────
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    let weeklyPlan = JSON.parse(localStorage.getItem('internos_weekly') || '{}');
+
+    function renderWeeklyPlan() {
+      const weeklyDiv = document.getElementById('weeklyPlan');
+      weeklyDiv.innerHTML = days.map(day => `
+        <div class="day-card">
+          <h4>${day}</h4>
+          <textarea class="day-input" placeholder="Plan for ${day}" data-day="${day}">${weeklyPlan[day] || ''}</textarea>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.day-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+          weeklyPlan[e.target.dataset.day] = e.target.value;
+          localStorage.setItem('internos_weekly', JSON.stringify(weeklyPlan));
+        });
+      });
+    }
+
+    // ───────────────────────────────────────────────────────
+    // COMPANIES TAB
+    // ───────────────────────────────────────────────────────
+    function renderCompanies() {
+      const companiesData = [
+        { name: 'Google', logo: '🔎', careers: 'https://careers.google.com/' },
+        { name: 'Microsoft', logo: '🪟', careers: 'https://careers.microsoft.com/' },
+        { name: 'Amazon', logo: '📦', careers: 'https://www.amazon.jobs/' },
+        { name: 'Apple', logo: '🍎', careers: 'https://www.apple.com/jobs/' },
+        { name: 'Meta', logo: '📱', careers: 'https://www.metacareers.com/' },
+        { name: 'Tesla', logo: '⚡', careers: 'https://www.tesla.com/careers' },
+        { name: 'Netflix', logo: '🎬', careers: 'https://jobs.netflix.com/' },
+        { name: 'LinkedIn', logo: '💼', careers: 'https://careers.linkedin.com/' },
+      ];
+
+      const grid = document.getElementById('companiesGrid');
+      grid.innerHTML = companiesData.map(company => `
+        <div class="company-card">
+          <div class="company-logo">${company.logo}</div>
+          <div class="company-name">${company.name}</div>
+          <div class="company-links">
+            <a class="company-link" href="${company.careers}" target="_blank" rel="noopener">Visit Portal</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ───────────────────────────────────────────────────────
+    // RESUME MODAL
+    // ───────────────────────────────────────────────────────
+    function openResumeModal() {
+      document.getElementById('resumeModal').classList.add('open');
+    }
+
+    function closeResumeModal() {
+      document.getElementById('resumeModal').classList.remove('open');
+    }
+
+    function openResume(type) {
+      alert(`Opening ${type} resume...`);
+      closeResumeModal();
+    }
+
+    document.getElementById('resumeBtn').addEventListener('click', openResumeModal);
+
+    // ───────────────────────────────────────────────────────
+    // AI ASSISTANT
+    // ───────────────────────────────────────────────────────
+    const STARTER_CHIPS = [
+      'Find Data Analyst internships',
+      'Write a cold email to a recruiter',
+      'Check my resume for ATS',
+      'Prep me for a BA interview'
+    ];
+
+    const AI_RESPONSES = {
+      'find data analyst internships': 'Here are the best platforms for Data Analyst internships:\n\n1. **LinkedIn Jobs** - Filter by internship level\n2. **Internshala** - Campus + off-campus\n3. **Wellfound** - Startup roles\n4. **Unstop** - Competitions with internships\n\nCheck the "Sources" tab for direct links!',
+      'write a cold email to a recruiter': 'Subject: Data Analyst Intern Opportunity\n\nHi [Name],\n\nI\'m [Your Name], a [Year] student passionate about data analytics. I\'ve worked on [Project] and would love to discuss internship opportunities at [Company].\n\nLooking forward to connecting!\n\nBest,\n[Your Name]',
+      'check my resume for ats': 'Use the ATS Checker tab to:\n\n✓ Paste your resume\n✓ Paste the job description\n✓ Get detailed keyword analysis\n✓ See missing skills to add\n\nTip: Include keywords naturally in your experience!',
+      'prep me for a ba interview': 'Key areas to prep:\n\n📊 Case Studies - Market sizing, profitability\n💻 SQL Basics - Simple queries, joins\n📈 Analytics - Metrics, KPIs\n🎯 Behavioral - Tell me about a time...\n\nCheck YouTube for full prep videos!',
+      'default': 'I\'m InternOS Assistant! 🤖 I can help you with:\n\n• Finding internship opportunities\n• Writing cold emails\n• Resume optimization tips\n• Interview preparation\n• Application tracking\n\nWhat would you like help with?'
     };
-    apps.push(app);
-    localStorage.setItem('internos_apps', JSON.stringify(apps));
-    this.reset();
+
+    let aiMessages = JSON.parse(localStorage.getItem('internos_ai_messages') || '[]');
+    let aiWaitingForResponse = false;
+
+    function toggleAIPanel() {
+      const panel = document.getElementById('aiPanel');
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        initializeAIPanel();
+      }
+    }
+
+    function initializeAIPanel() {
+      const chipsDiv = document.getElementById('aiChips');
+
+      if (aiMessages.length === 0) {
+        chipsDiv.innerHTML = STARTER_CHIPS.map(chip =>
+          `<button class="ai-chip" onclick="sendAIChip('${chip}')">${chip}</button>`
+        ).join('');
+      } else {
+        renderAIMessages();
+        chipsDiv.innerHTML = '';
+      }
+    }
+
+    function sendAIChip(text) {
+      const input = document.getElementById('aiInput');
+      input.value = text;
+      sendAIMessage();
+    }
+
+    function getAIResponse(userMessage) {
+      const lowerMessage = userMessage.toLowerCase();
+
+      for (let key in AI_RESPONSES) {
+        if (lowerMessage.includes(key)) {
+          return AI_RESPONSES[key];
+        }
+      }
+
+      return AI_RESPONSES['default'];
+    }
+
+    function sendAIMessage() {
+      const input = document.getElementById('aiInput');
+      const message = input.value.trim();
+      if (!message || aiWaitingForResponse) return;
+
+      aiMessages.push({ role: 'user', content: message });
+      input.value = '';
+      renderAIMessages();
+      document.getElementById('aiChips').innerHTML = '';
+
+      aiWaitingForResponse = true;
+      const messagesDiv = document.getElementById('aiMessages');
+      messagesDiv.innerHTML += `
+        <div class="ai-message bot">
+          <div class="ai-typing">
+            <div class="ai-dot"></div>
+            <div class="ai-dot"></div>
+            <div class="ai-dot"></div>
+          </div>
+        </div>
+      `;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      setTimeout(() => {
+        const response = getAIResponse(message);
+        aiMessages.push({ role: 'assistant', content: response });
+        localStorage.setItem('internos_ai_messages', JSON.stringify(aiMessages));
+        renderAIMessages();
+        aiWaitingForResponse = false;
+      }, 800);
+    }
+
+    function renderAIMessages() {
+      const messagesDiv = document.getElementById('aiMessages');
+      messagesDiv.innerHTML = aiMessages.map(msg => `
+        <div class="ai-message ${msg.role}">
+          <div class="ai-msg-bubble">${msg.content.replace(/\n/g, '<br>')}</div>
+        </div>
+      `).join('');
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    document.getElementById('aiBtnToggle').onclick = toggleAIPanel;
+    document.getElementById('aiCloseBtn').onclick = toggleAIPanel;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && document.activeElement === document.getElementById('aiInput')) {
+        sendAIMessage();
+      }
+    });
+
+    // ───────────────────────────────────────────────────────
+    // INITIALIZATION
+    // ───────────────────────────────────────────────────────
     renderApplications();
     renderDashboard();
     renderTracker();
-  };
-  renderApplications();
-
-  // Render Dashboard
-  function renderDashboard() {
-    const dash = document.getElementById('dashboardApps');
-    if(apps.length === 0) {
-      dash.innerHTML = '<div class="empty-state">Start by adding an application to track your progress!</div>';
-      return;
-    }
-    const statuses = {};
-    apps.forEach(app => {
-      statuses[app.status] = (statuses[app.status] || 0) + 1;
-    });
-    let html = '<div class="card-grid">';
-    for(let status in statuses) {
-      const label = status.replace(/-/g, ' ').toUpperCase();
-      html += `<div class="card"><div class="card-title">${label}</div><div class="card-desc" style="font-size:1.5em;font-weight:600;">${statuses[status]}</div></div>`;
-    }
-    html += '</div>';
-    dash.innerHTML = html;
-  }
-  renderDashboard();
-
-  // Render Tracker
-  function renderTracker() {
-    const list = document.getElementById('trackerList');
-    if(apps.length === 0) {
-      list.innerHTML = '<div class="empty-state">No applications tracked yet.</div>';
-      return;
-    }
-    let html = '<table class="tracker-table"><thead><tr><th>Company</th><th>Role</th><th>Resume Used</th><th>Status</th><th>Applied</th><th>Notes</th></tr></thead><tbody>';
-    apps.forEach(app => {
-      html += `<tr>
-        <td>${app.company}</td>
-        <td>${app.role}</td>
-        <td>${app.resume === 'general' ? '📄 General' : '💻 Technical'}</td>
-        <td><span class="status-badge ${app.status}">${app.status.replace(/-/g, ' ')}</span></td>
-        <td>${app.date || '-'}</td>
-        <td>${app.notes || '-'}</td>
-      </tr>`;
-    });
-    html += '</tbody></table>';
-    list.innerHTML = html;
-  }
-  renderTracker();
-
-  // Weekly Planner
-  function renderWeekly() {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const weeklyDiv = document.getElementById('weeklyPlan');
-    let html = '';
-    days.forEach(day => {
-      const key = day.toLowerCase();
-      const value = weekly[key] || '';
-      html += `<div class="day-card">
-        <h4>${day}</h4>
-        <textarea class="day-input" placeholder="Add your plan..." onchange="updateWeekly('${key}', this.value)">${value}</textarea>
-      </div>`;
-    });
-    weeklyDiv.innerHTML = html;
-  }
-  function updateWeekly(day, value) {
-    weekly[day] = value;
-    localStorage.setItem('internos_weekly', JSON.stringify(weekly));
-  }
-  renderWeekly();
-</script>
+    renderWeeklyPlan();
+    renderCompanies();
+    loadTop100Companies();
+  </script>
 </body>
+
 </html>
